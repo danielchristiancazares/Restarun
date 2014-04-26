@@ -16,9 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class LoginFragment extends Fragment {
-	private View login_view;
-	private static final String TAG = "LoginFragment";
+
+	private View loginView;
+
 	private UiLifecycleHelper uihelper;
+
 	private LoginButton authbutton;
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -30,16 +32,24 @@ public class LoginFragment extends Fragment {
 		}
 	};
 
+	/**
+	 * @author danielcazares
+	 * @function_name: onCreateView();
+	 * @description: onCreateView() is a superclass function override that is
+	 *               called upon instantiation of the view. Additionally, it
+	 *               sets the current view and gives access to layout objects
+	 *               defined within the fragment's layout.
+	 **/
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		/** Sets the current view **/
-		login_view = inflater
+		loginView = inflater
 				.inflate(R.layout.fragment_login, container, false);
 
 		/** Find the Facebook login button to edit functionality and permissions **/
-		authbutton = (LoginButton) login_view.findViewById(R.id.authButton);
+		authbutton = (LoginButton) loginView.findViewById(R.id.authButton);
 
 		/** To use a LoginButton inside a fragment, we call setFragment on it **/
 		authbutton.setFragment(this);
@@ -48,15 +58,22 @@ public class LoginFragment extends Fragment {
 		authbutton.setReadPermissions(Arrays
 				.asList("user_likes", "user_status"));
 
-		return login_view;
+		return loginView;
 	}
 
+	/**
+	 * @author danielcazares
+	 * @function_name: onSessionStatechange();
+	 * @description: onSessionStatechange() provides access to perform extra
+	 *               functionality upon Facebook session state changes, such as
+	 *               logging in or out.
+	 **/
 	private void onSessionStatechange(Session session, SessionState state,
 			Exception exception) {
 		if (state.isOpened()) {
-			Log.i(TAG, "LOGGED IN....");
+			Log.i("SESSION STATE CHANGE", "LOGGED IN.");
 		} else {
-			Log.i(TAG, "LOGGED OUT....");
+			Log.i("SESSION STATE CHANGE", "LOGGED OUT.");
 		}
 	}
 

@@ -16,8 +16,7 @@ import java.util.UUID;
  * @author danielcazares
  * @class: MainActivity
  * @superclass: FragmentActivity
- * @function_protypes: public String getDeviceId(); - Returns the phone UDID.
- * 
+ * @function_protypes: public String getDeviceId();
  * @description: MainActivity is the container for the entire application and
  *               its fragments. This is the main class used to switch and pass
  *               data between fragments.
@@ -26,7 +25,11 @@ public class MainActivity extends FragmentActivity {
 
 	private LoginFragment loginfragment;
 
-	/** Used to get the device's unique ID **/
+	/**
+	 * @author danielcazares
+	 * @function_name: getDeviceId();
+	 * @description: getDeviceId() is used to get the device's UDID.
+	 **/
 	public String getDeviceId() {
 		/** TelephonyManager objects provide access to different phone services **/
 		final TelephonyManager tm = (TelephonyManager) getBaseContext()
@@ -53,7 +56,15 @@ public class MainActivity extends FragmentActivity {
 		return deviceId;
 	}
 
-	/** Called when the activity is first created. */
+	/**
+	 * @author danielcazares
+	 * @function_name: onCreate();
+	 * @description: onCreate() is a superclass function override called upon
+	 *               instantiation of the activity. Additionally, it checks for
+	 *               previous saved states and instantiates and adds a new
+	 *               loginFragment if none are found or retrieves the previous
+	 *               fragment if it's found.
+	 **/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,6 +91,13 @@ public class MainActivity extends FragmentActivity {
 		Log.i("UDID", getDeviceId());
 	}
 
+	/**
+	 * @author danielcazares
+	 * @function_name: onActivityResult();
+	 * @description: onActivityResult() is a superclass function override called
+	 *               upon exit of this activity. It is received immediately
+	 *               before onResume() when some other activity is resumed.
+	 **/
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
