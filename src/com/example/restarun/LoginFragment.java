@@ -10,10 +10,13 @@ import com.facebook.widget.LoginButton;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class LoginFragment extends Fragment {
 
@@ -21,7 +24,8 @@ public class LoginFragment extends Fragment {
 
 	private UiLifecycleHelper uihelper;
 
-	private LoginButton authbutton;
+	private LoginButton authButton;
+	private Button guestButton;
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 
@@ -45,18 +49,38 @@ public class LoginFragment extends Fragment {
 			Bundle savedInstanceState) {
 
 		/** Sets the current view **/
-		loginView = inflater
-				.inflate(R.layout.fragment_login, container, false);
+		loginView = inflater.inflate(R.layout.fragment_login, container, false);
 
 		/** Find the Facebook login button to edit functionality and permissions **/
-		authbutton = (LoginButton) loginView.findViewById(R.id.authButton);
+		authButton = (LoginButton) loginView.findViewById(R.id.authButton);
 
 		/** To use a LoginButton inside a fragment, we call setFragment on it **/
-		authbutton.setFragment(this);
+		authButton.setFragment(this);
 
 		/** Edit the permissions of the Login button to access Likes and Status **/
-		authbutton.setReadPermissions(Arrays
+		authButton.setReadPermissions(Arrays
 				.asList("user_likes", "user_status"));
+
+		/** Find the Guest login button to provide functionality **/
+		guestButton = (Button) loginView.findViewById(R.id.guestButton);
+
+		guestButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				final FragmentManager fragmentManager = getFragmentManager();
+				FragmentTransaction fragmentTransaction = fragmentManager
+						.beginTransaction();
+
+				final SearchFragment searchFragment;
+
+				searchFragment = new SearchFragment();
+
+				fragmentTransaction.replace(R.id.container,
+						searchFragment);
+				fragmentTransaction.commit();
+			}
+
+		});
 
 		return loginView;
 	}

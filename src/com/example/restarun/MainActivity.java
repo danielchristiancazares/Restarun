@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.ViewSwitcher;
 import android.content.Context;
+
 
 /** Java-specific imports **/
 import java.util.UUID;
@@ -23,8 +25,8 @@ import java.util.UUID;
  */
 public class MainActivity extends FragmentActivity {
 
-	private LoginFragment loginfragment;
-
+	private LoginFragment loginFragment;
+	
 	/**
 	 * @author danielcazares
 	 * @function_name: getDeviceId();
@@ -68,23 +70,24 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
+		setContentView(R.layout.activity_main);
 		/**
 		 * A new fragment will be created if no previous fragment is found when
 		 * first opening the program.
 		 **/
 		if (savedInstanceState == null) {
-			loginfragment = new LoginFragment();
+			loginFragment = new LoginFragment();
 			getSupportFragmentManager().beginTransaction()
-					.add(android.R.id.content, loginfragment).commit();
+					.add(R.id.container, loginFragment).commit();
 		}
 		/**
 		 * If a previous state is found, then we simply refer to the previous
 		 * login fragment.
 		 */
 		else {
-			loginfragment = (LoginFragment) getSupportFragmentManager()
-					.findFragmentById(android.R.id.content);
+			loginFragment = (LoginFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.container);
 		}
 
 		/** DEBUGGING: Output the UDID to "info" level logging **/
