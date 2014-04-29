@@ -6,9 +6,50 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/latTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="THIS IS THE SEARCH VIEW" />
+        android:text="LATITUDE" />
+
+    <EditText
+        android:id="@+id/latNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:text="0.0" />
+
+    <TextView
+        android:id="@+id/longTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LONGITUDE" />
+
+    <EditText
+        android:id="@+id/longNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:text="0.0" />
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="THIS IS THE SEARCH VIEW" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/quickSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Quick Search" />
 
 </LinearLayout>
