@@ -65,19 +65,24 @@ public class SearchFragment extends Fragment {
 				StringBuilder myList = new StringBuilder("" + myPlaces.size()
 						+ " places found.\n");
 
-				// for (int i = 0; i < myPlaces.size(); i++) {
-				// }
-				myList.append(myPlaces.get(0).getName() + "\n\t"
-						+ myPlaces.get(0).getVicinity() + "\n");
+				myList.append(myPlaces.get(1).getName() + "\n\t"
+						+ myPlaces.get(1).getVicinity() + "\n\t");
 				locImg = (ImageView) searchView.findViewById(R.id.imageView1);
+				try {
+					StringBuilder imgUrl = new StringBuilder(
+							"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400");
+					imgUrl.append("&photoreference=");
+					imgUrl.append(myPlaces.get(1).getRef().toString());
+					imgUrl.append("&sensor=true&key=AIzaSyB_9AfRh1FkxCyWmyMw93hqQKu_VCpEjFE");
+					new DownloadImageTask(locImg).execute(imgUrl.toString());
+					
+				} catch (Exception e) {
 
-				String imgURL = myPlaces.get(0).getIcon().toString();
-
+				}
 				writeText.setText(myList.toString());
 
 				writeText.setVisibility(searchView.VISIBLE);
-				
-				new DownloadImageTask(locImg).execute(imgURL);
+
 			}
 		});
 
@@ -87,23 +92,21 @@ public class SearchFragment extends Fragment {
 	private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 		ImageView internalImage = null;
 
-		
-		
 		public DownloadImageTask(ImageView bmImage) {
 			this.internalImage = bmImage;
 		}
-		
+
 		protected Bitmap doInBackground(String... urls) {
 			String urldisplay = urls[0];
-			Bitmap mIcon11 = null;
+			Bitmap mIcon = null;
 			try {
 				InputStream in = new java.net.URL(urldisplay).openStream();
-				mIcon11 = BitmapFactory.decodeStream(in);
+				mIcon = BitmapFactory.decodeStream(in);
 			} catch (Exception e) {
 				Log.e("Error", e.getMessage());
 				e.printStackTrace();
 			}
-			return mIcon11;
+			return mIcon;
 		}
 
 		protected void onPostExecute(Bitmap result) {

@@ -3,6 +3,7 @@ package com.example.restarun.googlePlaces;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,6 +12,7 @@ public class Place {
 	private String icon;
 	private String name;
 	private String vicinity;
+	private String photo_reference;
 	private Double latitude;
 	private Double longitude;
 
@@ -20,6 +22,14 @@ public class Place {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getRef() {
+		return photo_reference;
+	}
+
+	public void setRef(String ref) {
+		this.photo_reference = ref;
 	}
 
 	public String getIcon() {
@@ -65,16 +75,25 @@ public class Place {
 	static Place jsonToPontoReferencia(JSONObject pontoReferencia) {
 		try {
 			Place result = new Place();
-			
+
 			JSONObject geometry = (JSONObject) pontoReferencia.get("geometry");
 			JSONObject location = (JSONObject) geometry.get("location");
-			
+			try {
+				JSONArray photos = pontoReferencia.getJSONArray("photos");
+				if (photos != null) {
+					JSONObject photoArray = (JSONObject) photos.get(0);
+					result.setRef(photoArray.get("photo_reference").toString());
+				}
+			} catch (JSONException e) {
+
+			}
 			result.setLatitude((Double) location.get("lat"));
 			result.setLongitude((Double) location.get("lng"));
 			result.setIcon(pontoReferencia.getString("icon"));
 			result.setName(pontoReferencia.getString("name"));
 			result.setVicinity(pontoReferencia.getString("vicinity"));
 			result.setId(pontoReferencia.getString("id"));
+
 			return result;
 		} catch (JSONException ex) {
 			Logger.getLogger(Place.class.getName()).log(Level.SEVERE, null, ex);
