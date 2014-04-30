@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class LoginFragment extends Fragment {
 
@@ -67,7 +68,11 @@ public class LoginFragment extends Fragment {
 		guestButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				 Toast.makeText(guestButton.getContext(),
+						getString(R.string.logged_guest), Toast.LENGTH_LONG).show();
+
 				final FragmentManager fragmentManager = getFragmentManager();
+
 				FragmentTransaction fragmentTransaction = fragmentManager
 						.beginTransaction();
 
@@ -75,8 +80,7 @@ public class LoginFragment extends Fragment {
 
 				searchFragment = new SearchFragment();
 
-				fragmentTransaction.replace(R.id.container,
-						searchFragment);
+				fragmentTransaction.replace(R.id.container, searchFragment);
 				fragmentTransaction.commit();
 			}
 

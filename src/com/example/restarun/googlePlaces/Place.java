@@ -8,91 +8,88 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Place {
-	private String id;
-	private String icon;
-	private String name;
-	private String vicinity;
-	private String photo_reference;
-	private Double latitude;
-	private Double longitude;
+	private String m_ID, m_Icon, m_Name, m_Address, m_photoRef;
 
-	public String getId() {
-		return id;
+	private Double m_Lat, m_Long;
+
+	public String getID() {
+		return m_ID;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setID(String id) {
+		this.m_ID = id;
 	}
 
 	public String getRef() {
-		return photo_reference;
+		return m_photoRef;
 	}
 
 	public void setRef(String ref) {
-		this.photo_reference = ref;
+		this.m_photoRef = ref;
 	}
 
 	public String getIcon() {
-		return icon;
+		return m_Icon;
 	}
 
 	public void setIcon(String icon) {
-		this.icon = icon;
+		this.m_Icon = icon;
 	}
 
 	public Double getLatitude() {
-		return latitude;
+		return m_Lat;
 	}
 
 	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
+		this.m_Lat = latitude;
 	}
 
 	public Double getLongitude() {
-		return longitude;
+		return m_Long;
 	}
 
 	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
+		this.m_Long = longitude;
 	}
 
 	public String getName() {
-		return name;
+		return m_Name;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.m_Name = name;
 	}
 
 	public String getVicinity() {
-		return vicinity;
+		return m_Address;
 	}
 
 	public void setVicinity(String vicinity) {
-		this.vicinity = vicinity;
+		this.m_Address = vicinity;
 	}
 
-	static Place jsonToPontoReferencia(JSONObject pontoReferencia) {
+	static Place parseJSON(JSONObject paramJSONObject) {
+		Place result = new Place();
 		try {
-			Place result = new Place();
 
-			JSONObject geometry = (JSONObject) pontoReferencia.get("geometry");
+			JSONObject geometry = (JSONObject) paramJSONObject.get("geometry");
 			JSONObject location = (JSONObject) geometry.get("location");
+
 			try {
-				JSONArray photos = pontoReferencia.getJSONArray("photos");
+				JSONArray photos = paramJSONObject.getJSONArray("photos");
 				if (photos != null) {
 					JSONObject photoArray = (JSONObject) photos.get(0);
 					result.setRef(photoArray.get("photo_reference").toString());
 				}
 			} catch (JSONException e) {
-
 			}
+
 			result.setLatitude((Double) location.get("lat"));
 			result.setLongitude((Double) location.get("lng"));
-			result.setIcon(pontoReferencia.getString("icon"));
-			result.setName(pontoReferencia.getString("name"));
-			result.setVicinity(pontoReferencia.getString("vicinity"));
-			result.setId(pontoReferencia.getString("id"));
+			result.setIcon(paramJSONObject.getString("icon"));
+			result.setName(paramJSONObject.getString("name"));
+			result.setVicinity(paramJSONObject.getString("vicinity"));
+			result.setID(paramJSONObject.getString("id"));
 
 			return result;
 		} catch (JSONException ex) {
@@ -100,11 +97,4 @@ public class Place {
 		}
 		return null;
 	}
-
-	@Override
-	public String toString() {
-		return "Place{" + "id=" + id + ", icon=" + icon + ", name=" + name
-				+ ", latitude=" + latitude + ", longitude=" + longitude + '}';
-	}
-
 }

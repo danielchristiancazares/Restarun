@@ -3,10 +3,19 @@ package com.example.restarun;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import android.app.Activity;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.restarun.googlePlaces.Place;
 import com.example.restarun.googlePlaces.PlacesAPI;
@@ -47,7 +57,21 @@ public class SearchFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 
-				writeText.setVisibility(searchView.INVISIBLE);
+				CheckLocation checkLoc = new CheckLocation(quickSearchButton
+						.getContext());
+				Location currentLocation = checkLoc.getLocation();
+				if (currentLocation != null) {
+					TextView latText = (TextView) searchView
+							.findViewById(R.id.latTextView);
+					TextView longText = (TextView) searchView
+							.findViewById(R.id.longTextView);
+
+					latitude = currentLocation.getLatitude();
+					longitude = currentLocation.getLongitude();
+
+					latText.setText("Latitude: " + latitude);
+					longText.setText("Longitude: " + longitude);
+				}
 
 				ArrayList<Place> myPlaces = new PlacesAPI().findPlaces(
 						latitude, longitude, "restaurant");
@@ -64,18 +88,61 @@ public class SearchFragment extends Fragment {
 					imgUrl.append(myPlaces.get(1).getRef().toString());
 					imgUrl.append("&sensor=true&key=AIzaSyB_9AfRh1FkxCyWmyMw93hqQKu_VCpEjFE");
 					new DownloadImageTask(locImg).execute(imgUrl.toString());
-					
+
 				} catch (Exception e) {
 
 				}
 				writeText.setText(myList.toString());
-
-				writeText.setVisibility(searchView.VISIBLE);
-
 			}
 		});
 
 		return searchView;
+	}
+
+	private class CheckLocation extends Service implements LocationListener {
+
+		protected LocationManager m_locationManager;
+
+		public CheckLocation(Context paramContext) {
+			try {
+				m_locationManager = (LocationManager) paramContext
+						.getSystemService(Context.LOCATION_SERVICE);
+				m_locationManager.requestLocationUpdates(
+						LocationManager.GPS_PROVIDER, 3000, // 3 sec
+						10, this);
+			} catch (Exception e) {
+
+			}
+		}
+
+		public Location getLocation() {
+			return m_locationManager
+					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		}
+
+		@Override
+		public void onLocationChanged(Location location) {
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+		}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public IBinder onBind(Intent intent) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 
 	private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

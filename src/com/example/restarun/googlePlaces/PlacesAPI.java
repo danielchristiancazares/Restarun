@@ -16,13 +16,13 @@ import android.util.Log;
 
 public class PlacesAPI {
 
-	private static String apiKey = "AIzaSyB_9AfRh1FkxCyWmyMw93hqQKu_VCpEjFE";
-	public String myString = "https://maps.googleapis.com/maps/api/place/search/json?";
+	private static String m_googleKey = "AIzaSyB_9AfRh1FkxCyWmyMw93hqQKu_VCpEjFE";
+	private static String m_baseURL = "https://maps.googleapis.com/maps/api/place/search/json?";
 
 	public ArrayList<Place> findPlaces(double latitude, double longitude,
 			String placeType) {
 
-		String urlString = makeUrl(latitude, longitude, placeType);
+		String urlString = buildURL(latitude, longitude, placeType);
 
 		try {
 			String json = getJSON(urlString);
@@ -32,48 +32,36 @@ public class PlacesAPI {
 
 			ArrayList<Place> arrayList = new ArrayList<Place>();
 			for (int i = 0; i < array.length(); i++) {
-				try {
-					Place place = Place
-							.jsonToPontoReferencia((JSONObject) array.get(i));
-					arrayList.add(place);
-				} catch (Exception e) {
-				}
+				Place place = Place.parseJSON((JSONObject) array.get(i));
+				arrayList.add(place);
 			}
 			return arrayList;
+
 		} catch (JSONException ex) {
-			Log.e("test", "JSONException: " + urlString);
+			Log.e("error", "JSONException: " + urlString);
 			ex.printStackTrace();
 		}
 		return null;
 	}
 
 	// https://maps.googleapis.com/maps/api/place/search/json?location=32.8762142,-117.2354577&radius=1000&types=restaurant&sensor=false&key=AIzaSyB_9AfRh1FkxCyWmyMw93hqQKu_VCpEjFE
-	public String makeUrl(double latitude, double longitude, String place) {
-		StringBuilder urlString = new StringBuilder(
-				"https://maps.googleapis.com/maps/api/place/search/json?");
+	private String buildURL(double latitude, double longitude, String place) {
+		StringBuilder urlString = new StringBuilder(m_baseURL);
 
-		if (place.equals("")) {
-			urlString.append("&location=");
-			urlString.append(Double.toString(latitude));
-			urlString.append(",");
-			urlString.append(Double.toString(longitude));
-			urlString.append("&radius=1000");
-			// urlString.append("&types="+place);
-			urlString.append("&sensor=false&key=" + apiKey);
-		} else {
-			urlString.append("&location=");
-			urlString.append(Double.toString(latitude));
-			urlString.append(",");
-			urlString.append(Double.toString(longitude));
-			urlString.append("&radius=1000");
+		urlString.append("&location=");
+		urlString.append(Double.toString(latitude));
+		urlString.append(",");
+		urlString.append(Double.toString(longitude));
+		urlString.append("&radius=1000");
+		if (!place.equals("")) {
 			urlString.append("&types=" + place);
-			urlString.append("&sensor=false&key=" + apiKey);
 		}
+		urlString.append("&sensor=false&key=" + m_googleKey);
 
 		return urlString.toString();
 	}
 
-	 protected String getJSON(String url) {
+	private String getJSON(String url) {
 		httpRequest myRequest = new httpRequest(url);
 		myRequest.execute();
 		try {
@@ -81,7 +69,7 @@ public class PlacesAPI {
 				Thread.sleep(10);
 			}
 		} catch (InterruptedException e) {
-			Log.i("debug", "InterruptedException: " + myString);
+			Log.e("error", "InterruptedException: " + m_baseURL);
 			e.printStackTrace();
 		}
 		return myRequest.getResponse();
@@ -89,15 +77,15 @@ public class PlacesAPI {
 
 	private class httpRequest extends AsyncTask<Void, Void, Void> {
 
-		String myUrl;
-		String myResponse;
+		private String m_URL;
+		private String m_servResponse;
 
-		public httpRequest(String newString) {
-			myUrl = newString;
+		public httpRequest(String givenURL) {
+			this.m_URL = givenURL;
 		}
 
 		public String getResponse() {
-			return myResponse;
+			return m_servResponse;
 		}
 
 		@Override
@@ -106,7 +94,7 @@ public class PlacesAPI {
 			StringBuilder jsonResults = new StringBuilder();
 
 			try {
-				URL url = new URL(myUrl);
+				URL url = new URL(m_URL);
 				conn = (HttpURLConnection) url.openConnection();
 
 				InputStreamReader in = new InputStreamReader(
@@ -117,13 +105,13 @@ public class PlacesAPI {
 				while ((read = in.read(buff)) != -1) {
 					jsonResults.append(buff, 0, read);
 				}
-				myResponse = jsonResults.toString();
+				m_servResponse = jsonResults.toString();
 			} catch (MalformedURLException e) {
-				Log.e("debug", "MalformedURLException: " + myResponse);
+				Log.e("error", "MalformedURLException: " + m_servResponse);
 				e.printStackTrace();
 				return null;
 			} catch (IOException e) {
-				Log.e("debug", "IOException: " + myResponse);
+				Log.e("error", "IOException: " + m_servResponse);
 				e.printStackTrace();
 				return null;
 			} finally {
