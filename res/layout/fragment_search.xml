@@ -8,61 +8,20 @@
         android:id="@+id/quickSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/advancedSearch"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="55dp"
         android:gravity="center"
         android:text="@string/quick_search" />
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:contentDescription="@string/business_image"
-        android:padding="10dp"
-        android:src="@android:drawable/editbox_dropdown_light_frame" />
-
-    <TextView
-        android:id="@+id/textView1"
+    <Button
+        android:id="@+id/advancedSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/imageView1"
-        android:text="@string/search_text" />
-
-    <TextView
-        android:id="@+id/longTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/quickSearch"
         android:layout_centerHorizontal="true"
-        android:text="Longitude: -117.2354577" />
-
-    <TextView
-        android:id="@+id/latTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/longTextView"
-        android:layout_centerHorizontal="true"
-        android:text="Latitude: 32.8762142" />
-
-    <Button
-        android:id="@+id/dislikeButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/likeButton"
-        android:layout_centerHorizontal="true"
-        android:text="@string/see_another" />
-
-    <Button
-        android:id="@+id/likeButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView1"
-        android:layout_centerHorizontal="true"
-        android:text="@string/choose_this" />
+        android:layout_marginTop="188dp"
+        android:gravity="center"
+        android:text="@string/advanced_search" />
 
 </RelativeLayout>

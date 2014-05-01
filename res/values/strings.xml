@@ -12,5 +12,7 @@
 	<string name="quick_search">Quick Search</string>
 	<string name="business_image">Business Image</string>
 	<string name="search_text">No search performed yet.</string>
+	<string name="advanced_search">Advanced Search</string>
+	<string name="end_of_list">End of the list</string>
 
 </resources>
