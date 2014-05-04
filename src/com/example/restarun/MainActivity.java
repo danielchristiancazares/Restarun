@@ -89,7 +89,7 @@ public class MainActivity extends FragmentActivity {
 					.findFragmentById(R.id.container);
 		}
 
-		/** DEBUGGING: Output the UDID to "info" level logging **/
+		/** DEBUG Output the UDID to "info" level logging **/
 		Log.i("UDID", getDeviceId());
 	}
 
