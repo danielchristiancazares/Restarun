@@ -76,10 +76,11 @@ public class QuickSearchFragment extends Fragment {
 
 		myList.append(m_place.getName() + "\n");
 		myList.append(m_place.getVicinity() + "\n");
-		if (m_place.getRef() != null) {
+		if (m_place.getRef() != "") {
 			locImg.setImageBitmap(m_place.getPhoto());
 			writeText.setText(myList.toString());
-
+		} else {
+			locImg.setImageResource(R.drawable.no_photos_available);
 		}
 
 	}
