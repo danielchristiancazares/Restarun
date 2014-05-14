@@ -28,7 +28,7 @@ import android.util.Log;
  * @description Our Yelp class inherits functionality from AsyncTask in order
  *              for us to run any web-related requests in the background.
  */
-public class Yelp extends AsyncTask<Void, Void, Void> {
+public class Yelp extends AsyncTask<Void, Void, String> {
 	OAuthService service;
 	Token accessToken;
 	String m_Response = null;
@@ -55,12 +55,8 @@ public class Yelp extends AsyncTask<Void, Void, Void> {
 		this.accessToken = new Token(YELP_TOKEN, YELP_TOKEN_SECRET);
 	}
 
-	public String getResponse() {
-		return m_Response;
-	}
-
 	@Override
-	protected Void doInBackground(Void... params) {
+	protected String doInBackground(Void... params) {
 		OAuthRequest request = new OAuthRequest(Verb.GET,
 				"http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", "restaurant");
@@ -68,36 +64,13 @@ public class Yelp extends AsyncTask<Void, Void, Void> {
 		// request.addQuerystringParameter("limit", "1");
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
-		this.m_Response = response.getBody();
-		return null;
+
+		return response.getBody();
 	}
 
-	public ArrayList<Place> parseBusiness() throws JSONException {
-		/** Store the response as a JSON Object */
-		JSONObject m_JSONResponse = new JSONObject(m_Response);
-		/** The entry we want is the list of businesses. */
-		JSONArray businesses = m_JSONResponse.getJSONArray("businesses");
-		ArrayList<Place> foundPlaces = new ArrayList<Place>();
-		for (int i = 0; i < businesses.length(); ++i) {
-			JSONObject m_business = businesses.getJSONObject(i);
-			JSONObject m_location = m_business.getJSONObject("location");
-			JSONArray m_displayAddress = m_location.getJSONArray("display_address");
-			for(int j = 0; j < m_displayAddress.length(); ++j)
-			{
-				Log.d("DEBUG",m_displayAddress.get(j).toString());
-			}
-
-			
-			String m_Name = businesses.getJSONObject(i).get("name").toString();
-			String m_MobileURL = businesses.getJSONObject(i).get("mobile_url")
-					.toString();
-			String city = m_location.get("city").toString();
-			Float m_Rating = Float.parseFloat(businesses.getJSONObject(i)
-					.get("rating").toString());
-			Place newPlace = new Place(m_Name, m_Rating, city);
-			Log.d("DEBUG", m_Name);
-			foundPlaces.add(newPlace);
-		}
-		return foundPlaces;
+	@Override
+	protected void onPostExecute(String result) {
+		Log.d("DEBUG", result);
 	}
+
 }
