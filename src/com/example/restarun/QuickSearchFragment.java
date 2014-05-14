@@ -90,6 +90,7 @@ public class QuickSearchFragment extends Fragment {
 		}
 
 		myList.append(m_place.getName() + "\n");
+		myList.append(m_place.getCity() + "\n");
 		ratingBar.setRating(m_place.getRating());
 		Log.d("DEBUG", m_place.getName());
 		// if (m_place.get(Member.PHOTO_URL) != "") {

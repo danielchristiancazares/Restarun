@@ -78,14 +78,23 @@ public class Yelp extends AsyncTask<Void, Void, Void> {
 		/** The entry we want is the list of businesses. */
 		JSONArray businesses = m_JSONResponse.getJSONArray("businesses");
 		ArrayList<Place> foundPlaces = new ArrayList<Place>();
-
 		for (int i = 0; i < businesses.length(); ++i) {
+			JSONObject m_business = businesses.getJSONObject(i);
+			JSONObject m_location = m_business.getJSONObject("location");
+			JSONArray m_displayAddress = m_location.getJSONArray("display_address");
+			for(int j = 0; j < m_displayAddress.length(); ++j)
+			{
+				Log.d("DEBUG",m_displayAddress.get(j).toString());
+			}
+
+			
 			String m_Name = businesses.getJSONObject(i).get("name").toString();
 			String m_MobileURL = businesses.getJSONObject(i).get("mobile_url")
 					.toString();
+			String city = m_location.get("city").toString();
 			Float m_Rating = Float.parseFloat(businesses.getJSONObject(i)
 					.get("rating").toString());
-			Place newPlace = new Place(m_Name, m_Rating, m_MobileURL);
+			Place newPlace = new Place(m_Name, m_Rating, city);
 			Log.d("DEBUG", m_Name);
 			foundPlaces.add(newPlace);
 		}
