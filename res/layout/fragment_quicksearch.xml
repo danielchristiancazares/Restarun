@@ -14,20 +14,18 @@
         android:src="@android:drawable/editbox_dropdown_light_frame" />
 
     <RatingBar
-        android:id="@+id/ratingBar1"
+        android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="183dp" />
+        android:layout_above="@+id/textView1"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/ratingBar1"
+        android:layout_centerVertical="true"
         android:gravity="center"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
