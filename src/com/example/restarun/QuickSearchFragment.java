@@ -2,12 +2,14 @@ package com.example.restarun;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import android.animation.ObjectAnimator;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,13 +38,13 @@ public class QuickSearchFragment extends Fragment {
 	private TextView sortBy;
 
 	private ImageView locImg;
-	
+
 	private RatingBar ratingBar;
 
-	private RadioButton ratingRadio;	
+	private RadioButton ratingRadio;
 	private RadioButton distanceRadio;
 	private ObjectAnimator openRadio;
-	
+
 	private ArrayList<Place> m_placesList;
 	private Iterator<Place> m_iterator;
 
@@ -66,20 +68,13 @@ public class QuickSearchFragment extends Fragment {
 		ratingBar.setIsIndicator(true);
 
 		filterButton = (Button) searchView.findViewById(R.id.filterButton);
-		openFilter = ObjectAnimator.ofFloat(filterButton, "translationY", -220.0f);
-		openFilter.setInterpolator(new AccelerateDecelerateInterpolator());
-		openFilter.setDuration(500);
-		
-		//radioGroup = (RadioGroup) searchView.findViewById(R.id.radioGroup1);
+		openFilter = ObjectAnimator.ofFloat(filterButton, "translationY",
+				-220.0f);
+		// radioGroup = (RadioGroup) searchView.findViewById(R.id.radioGroup1);
 		sortBy = (TextView) searchView.findViewById(R.id.sortBy);
 		ratingRadio = (RadioButton) searchView.findViewById(R.id.ratingRadio);
-		distanceRadio = (RadioButton) searchView.findViewById(R.id.distanceRadio);
-
-		
-		 
-		sortBy.setVisibility(View.VISIBLE);
-		distanceRadio.setVisibility(View.VISIBLE);
-		ratingRadio.setVisibility(View.VISIBLE);
+		distanceRadio = (RadioButton) searchView
+				.findViewById(R.id.distanceRadio);
 
 		/*
 		 * First, we create a LocationFinder class to find our GPS latitude and
@@ -98,6 +93,16 @@ public class QuickSearchFragment extends Fragment {
 		m_iterator = m_placesList.iterator();
 		displayPlace(m_iterator.next());
 
+		openRadio = ObjectAnimator.ofFloat(sortBy, "translationY", 200.0f);
+		openRadio.start();
+
+		openRadio = ObjectAnimator.ofFloat(ratingRadio, "translationY", 200.0f);
+		openRadio.start();
+
+		openRadio = ObjectAnimator.ofFloat(distanceRadio, "translationY",
+				200.0f);
+		openRadio.start();
+
 		locImg.setOnTouchListener(new OnSwipeTouchListener(locImg.getContext()) {
 
 			public void onSwipeRight() {
@@ -113,44 +118,77 @@ public class QuickSearchFragment extends Fragment {
 				}
 			}
 		});
+		ratingRadio.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (!(m_placesList.isEmpty())) {
+					Collections.sort(m_placesList, Place.ratingComparator);
+					m_iterator = m_placesList.iterator();
+					displayPlace(m_iterator.next());
+				}
+			}
+		});
+		
+		distanceRadio.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (!(m_placesList.isEmpty())) {
+					Collections.sort(m_placesList, Place.distanceComparator);
+					m_iterator = m_placesList.iterator();
+					displayPlace(m_iterator.next());
+				}
+			}
+		});
+		
 		filterButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (filterButtonClosed == true) {
 					openFilter.start();
 
-					openRadio = ObjectAnimator.ofFloat(sortBy, "translationY", -10.0f);
+					openRadio = ObjectAnimator.ofFloat(sortBy, "translationY",
+							-10.0f);
 					openRadio.start();
 
-					openRadio = ObjectAnimator.ofFloat(ratingRadio, "translationY", -10.0f);
+					openRadio = ObjectAnimator.ofFloat(ratingRadio,
+							"translationY", -10.0f);
 					openRadio.start();
-					
-					openRadio = ObjectAnimator.ofFloat(distanceRadio, "translationY", -10.0f);
+
+					openRadio = ObjectAnimator.ofFloat(distanceRadio,
+							"translationY", -10.0f);
 					openRadio.start();
-					
+
 					openFilter = ObjectAnimator.ofFloat(filterButton,
 							"translationY", 0.0f);
 					filterButtonClosed = false;
+					sortBy.setVisibility(View.VISIBLE);
+					distanceRadio.setVisibility(View.VISIBLE);
+					ratingRadio.setVisibility(View.VISIBLE);
 				} else {
+
 					openFilter.start();
 					openFilter = ObjectAnimator.ofFloat(filterButton,
 							"translationY", -220.0f);
-					
-					openRadio = ObjectAnimator.ofFloat(sortBy, "translationY", 200.0f);
+
+					openRadio = ObjectAnimator.ofFloat(sortBy, "translationY",
+							200.0f);
 					openRadio.start();
 
-					openRadio = ObjectAnimator.ofFloat(ratingRadio, "translationY", 200.0f);
+					openRadio = ObjectAnimator.ofFloat(ratingRadio,
+							"translationY", 200.0f);
 					openRadio.start();
-					
-					openRadio = ObjectAnimator.ofFloat(distanceRadio, "translationY", 200.0f);
+
+					openRadio = ObjectAnimator.ofFloat(distanceRadio,
+							"translationY", 200.0f);
 					openRadio.start();
-					
+
 					filterButtonClosed = true;
 
 				}
 			}
 
 		});
+
 		return searchView;
 
 	}
