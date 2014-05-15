@@ -1,17 +1,20 @@
 /** Application package definition **/
-package com.example.restarun;
+package com.example.restarun.LoginActivity;
 
 /** Android-specific imports **/
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.content.Context;
-
 
 /** Java-specific imports **/
 import java.util.UUID;
+
+import com.example.restarun.R;
+import com.example.restarun.SearchActivity.SearchActivity;
 
 /**
  * @author danielcazares
@@ -25,7 +28,13 @@ import java.util.UUID;
 public class MainActivity extends FragmentActivity {
 
 	private LoginFragment loginFragment;
-	
+
+	public void guestLogin(View view) {
+		Intent intent = new Intent(this, SearchActivity.class);
+		Button guestLoginButton = (Button) findViewById(R.id.guestButton);
+		startActivity(intent);
+	}
+
 	/**
 	 * @author danielcazares
 	 * @function_name: getDeviceId();
@@ -69,42 +78,25 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.activity_main);
-		/**
-		 * A new fragment will be created if no previous fragment is found when
-		 * first opening the program.
-		 **/
-		if (savedInstanceState == null) {
-			loginFragment = new LoginFragment();
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, loginFragment).commit();
-		}
-		/**
-		 * If a previous state is found, then we simply refer to the previous
-		 * login fragment.
-		 */
-		else {
-			loginFragment = (LoginFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.container);
-		}
 
-		/** DEBUG Output the UDID to "info" level logging **/
-		Log.i("UDID", getDeviceId());
+		setContentView(R.layout.activity_main);
+
+		loginFragment = new LoginFragment();
+		getSupportFragmentManager().beginTransaction()
+				.add(R.id.container, loginFragment).commit();
+
 	}
 
 	/**
 	 * @author danielcazares
 	 * @function_name: onActivityResult();
-	 * @description: onActivityResult() is a superclass function override called
-	 *               upon exit of this activity. It is received immediately
-	 *               before onResume() when some other activity is resumed.
+	 * @description: This function is called upon exit of this activity.
+	 *               Received immediately before onResume() when some other
+	 *               activity is resumed.
 	 **/
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
-		// loginfragment.onActivityResult(requestCode, resultCode, data);
 	}
 
 }

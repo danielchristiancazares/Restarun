@@ -1,7 +1,11 @@
-package com.example.restarun;
+package com.example.restarun.LoginActivity;
 
 import java.util.Arrays;
 
+import com.example.restarun.R;
+import com.example.restarun.R.id;
+import com.example.restarun.R.layout;
+import com.example.restarun.R.string;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -26,7 +30,6 @@ public class LoginFragment extends Fragment {
 	private UiLifecycleHelper uihelper;
 
 	private LoginButton authButton;
-	private Button guestButton;
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 
@@ -61,30 +64,6 @@ public class LoginFragment extends Fragment {
 		/** Edit the permissions of the Login button to access Likes and Status **/
 		authButton.setReadPermissions(Arrays
 				.asList("user_likes", "user_status"));
-
-		/** Find the Guest login button to provide functionality **/
-		guestButton = (Button) loginView.findViewById(R.id.guestButton);
-
-		guestButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				 Toast.makeText(guestButton.getContext(),
-						getString(R.string.logged_guest), Toast.LENGTH_LONG).show();
-
-				final FragmentManager fragmentManager = getFragmentManager();
-
-				FragmentTransaction fragmentTransaction = fragmentManager
-						.beginTransaction();
-
-				final SearchFragment searchFragment;
-
-				searchFragment = new SearchFragment();
-
-				fragmentTransaction.replace(R.id.container, searchFragment);
-				fragmentTransaction.commit();
-			}
-
-		});
 
 		return loginView;
 	}

@@ -1,4 +1,4 @@
-package com.example.restarun;
+package com.example.restarun.SearchActivity;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -9,6 +9,8 @@ import android.animation.ObjectAnimator;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,12 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.restarun.OnSwipeTouchListener;
+import com.example.restarun.R;
+import com.example.restarun.R.drawable;
+import com.example.restarun.R.id;
+import com.example.restarun.R.layout;
+import com.example.restarun.R.string;
 import com.example.restarun.gpsTracker.LocationFinder;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
@@ -36,6 +44,7 @@ public class QuickSearchFragment extends Fragment {
 	private TextView addressField;
 	private TextView distanceField;
 	private TextView sortBy;
+	private TextView categoryField;
 
 	private ImageView locImg;
 
@@ -46,11 +55,16 @@ public class QuickSearchFragment extends Fragment {
 	private ObjectAnimator openRadio;
 
 	private ArrayList<Place> m_placesList;
+	private ArrayList<String> m_categoriesList;
 	private Iterator<Place> m_iterator;
 
 	private Button filterButton;
 	private ObjectAnimator openFilter;
 	private static Boolean filterButtonClosed = true;
+	
+	private ViewPager mPager;
+    private PagerAdapter mPagerAdapter;
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,6 +78,7 @@ public class QuickSearchFragment extends Fragment {
 		nameField = (TextView) searchView.findViewById(R.id.name);
 		addressField = (TextView) searchView.findViewById(R.id.address);
 		distanceField = (TextView) searchView.findViewById(R.id.distance);
+		categoryField = (TextView) searchView.findViewById(R.id.category);
 		ratingBar = (RatingBar) searchView.findViewById(R.id.ratingBar);
 		ratingBar.setIsIndicator(true);
 
@@ -92,6 +107,16 @@ public class QuickSearchFragment extends Fragment {
 
 		m_iterator = m_placesList.iterator();
 		displayPlace(m_iterator.next());
+		categoryField.setText("Categories found: ");
+		m_categoriesList = new ArrayList<String>();
+		for (Place aPlace : m_placesList) {
+			if (m_categoriesList.contains(aPlace.getCategory())) {
+				continue;
+			} else {
+				m_categoriesList.add(aPlace.getCategory());
+				categoryField.append(aPlace.getCategory() + " ");
+			}
+		}
 
 		openRadio = ObjectAnimator.ofFloat(sortBy, "translationY", 200.0f);
 		openRadio.start();
@@ -102,7 +127,8 @@ public class QuickSearchFragment extends Fragment {
 		openRadio = ObjectAnimator.ofFloat(distanceRadio, "translationY",
 				200.0f);
 		openRadio.start();
-
+		
+		
 		locImg.setOnTouchListener(new OnSwipeTouchListener(locImg.getContext()) {
 
 			public void onSwipeRight() {
@@ -128,7 +154,7 @@ public class QuickSearchFragment extends Fragment {
 				}
 			}
 		});
-		
+
 		distanceRadio.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -139,7 +165,7 @@ public class QuickSearchFragment extends Fragment {
 				}
 			}
 		});
-		
+
 		filterButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

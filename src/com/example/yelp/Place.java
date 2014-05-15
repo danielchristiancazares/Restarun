@@ -1,6 +1,7 @@
 package com.example.yelp;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 import android.net.Uri;
@@ -8,15 +9,22 @@ import android.net.Uri;
 public class Place {
 	private String m_name;
 	private String m_address;
+	private String m_category;
+	private String m_sortableCat;
+	
 	private double m_rating;
 	private double m_distance;
+	
 	private Uri m_photoURI;
 
-	public Place(String pName, double pRating, String pAddress, double pDistance) {
+
+	public Place(String pName, double pRating, String pAddress, double pDistance, String pCat, String pSortCat) {
 		this.m_address = pAddress;
 		this.m_rating = pRating;
 		this.m_name = pName;
 		this.m_distance = pDistance;
+		this.m_category = pCat;
+		this.m_sortableCat = pSortCat;
 	}
 
 	public String getName() {
@@ -30,7 +38,15 @@ public class Place {
 	public String getAddress() {
 		return m_address;
 	}
+	
+	public String getCategory() {
+		return m_category;
+	}
 
+	public String getSortCat() {
+		return m_sortableCat;
+	}
+	
 	public Uri getPhoto() {
 		return m_photoURI;
 	}

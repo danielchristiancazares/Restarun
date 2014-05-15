@@ -19,11 +19,11 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <service
-            android:name=".LocationFinder"
+            android:name="com.example.restarun.LocationFinder"
             android:exported="false" />
 
         <activity
-            android:name="com.example.restarun.MainActivity"
+            android:name="com.example.restarun.LoginActivity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +36,11 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
+
+        <activity
+            android:name="com.example.restarun.SearchActivity.SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
     </application>
 
 </manifest>
