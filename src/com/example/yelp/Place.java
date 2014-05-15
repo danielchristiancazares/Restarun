@@ -1,7 +1,5 @@
 package com.example.yelp;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.Comparator;
 
 import android.net.Uri;

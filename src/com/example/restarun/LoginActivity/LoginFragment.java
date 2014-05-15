@@ -2,26 +2,19 @@ package com.example.restarun.LoginActivity;
 
 import java.util.Arrays;
 
-import com.example.restarun.R;
-import com.example.restarun.R.id;
-import com.example.restarun.R.layout;
-import com.example.restarun.R.string;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.widget.LoginButton;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
+
+import com.example.restarun.R;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.LoginButton;
 
 public class LoginFragment extends Fragment {
 

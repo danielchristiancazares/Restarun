@@ -44,7 +44,7 @@ public class YelpAPI {
 
 			/** The entry we want is the list of businesses. */
 			JSONArray businesses = m_JSONResponse.getJSONArray("businesses");
-
+			int j;
 			for (int i = 0; i < businesses.length(); ++i) {
 				/** Store an entire business object first */
 				JSONObject m_business = businesses.getJSONObject(i);
@@ -53,10 +53,11 @@ public class YelpAPI {
 				JSONArray m_displayAddress = m_location
 						.getJSONArray("display_address");
 				StringBuilder m_AddressString = new StringBuilder();
-				for (int j = 0; j < m_displayAddress.length(); ++j) {
+				for (j = 0; j < m_displayAddress.length() - 1; ++j) {
 					m_AddressString.append(m_displayAddress.get(j).toString()
 							+ "\n");
 				}
+				m_AddressString.append(m_displayAddress.get(j).toString());
 				JSONArray m_CatArray = m_business.getJSONArray("categories");
 				JSONArray m_categories = m_CatArray.getJSONArray(0);
 				String m_Category = m_categories.get(0).toString();

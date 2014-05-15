@@ -15,5 +15,6 @@
     <string name="advanced_search">Advanced Search</string>
     <string name="end_of_list">End of the list</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_slider_fragment">SliderFragment</string>
 
 </resources>

@@ -1,116 +1,58 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_quickSearch"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.50"
-        android:contentDescription="@string/business_image"
-        android:paddingTop="5dp"
-        android:src="@android:drawable/editbox_dropdown_light_frame" />
-
-    <RatingBar
-        android:id="@+id/ratingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:minHeight="50dp"
-        android:numStars="5" />
-
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="Name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="left"
-        android:text="Address"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Category"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/distance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Distance"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <EditText
-        android:id="@+id/editText1"
+    <LinearLayout
+        android:id="@+id/fragment_quicksearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10" >
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical" >
 
-        <requestFocus />
-    </EditText>
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/business_image"
+            android:src="@android:drawable/editbox_dropdown_light_frame" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="150dp" >
-
-        <Button
-            android:id="@+id/filterButton"
+        <RatingBar
+            android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="Filters" />
+            android:layout_gravity="center_horizontal"
+            android:minHeight="50dp"
+            android:numStars="5" />
 
         <TextView
-            android:id="@+id/sortBy"
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/radioGroup1"
-            android:layout_alignParentLeft="true"
-            android:text="Sort By: "
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="invisible" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Name"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <RadioGroup
-            android:id="@+id/radioGroup1"
+        <TextView
+            android:id="@+id/address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:orientation="vertical" >
+            android:layout_gravity="center_horizontal"
+            android:gravity="left"
+            android:text="Address"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <RadioButton
-                android:id="@+id/ratingRadio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rating"
-                android:visibility="invisible" />
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Distance"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
 
-            <RadioButton
-                android:id="@+id/distanceRadio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Distance"
-                android:visibility="invisible" />
-        </RadioGroup>
-    </RelativeLayout>
-
-</LinearLayout>
+</HorizontalScrollView>

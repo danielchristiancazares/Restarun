@@ -4,6 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="${packageName}.${activityClass}" >
+    tools:context="com.example.restarun.LoginActivity.SearchActivity" >
+
+    <LinearLayout
+        android:id="@+id/topView"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:orientation="vertical" >
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" >
+        </android.support.v4.view.ViewPager>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/botView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+    </LinearLayout>
 
 </LinearLayout>

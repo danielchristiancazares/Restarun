@@ -2,16 +2,15 @@
 package com.example.restarun.LoginActivity;
 
 /** Android-specific imports **/
+/** Java-specific imports **/
+import java.util.UUID;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.view.View;
-import android.widget.Button;
-import android.content.Context;
-
-/** Java-specific imports **/
-import java.util.UUID;
 
 import com.example.restarun.R;
 import com.example.restarun.SearchActivity.SearchActivity;
@@ -31,7 +30,6 @@ public class MainActivity extends FragmentActivity {
 
 	public void guestLogin(View view) {
 		Intent intent = new Intent(this, SearchActivity.class);
-		Button guestLoginButton = (Button) findViewById(R.id.guestButton);
 		startActivity(intent);
 	}
 

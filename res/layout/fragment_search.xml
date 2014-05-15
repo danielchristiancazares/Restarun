@@ -12,8 +12,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="55dp"
         android:gravity="center"
-        android:text="@string/quick_search"
-        android:onClick="quickSearch" />
+        android:onClick="quickSearch"
+        android:text="@string/quick_search" />
 
     <Button
         android:id="@+id/advancedSearch"
@@ -23,7 +23,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="188dp"
         android:gravity="center"
-        android:text="@string/advanced_search"
-        android:onClick="advancedSearch" />
+        android:onClick="advancedSearch"
+        android:text="@string/advanced_search" />
 
 </RelativeLayout>
