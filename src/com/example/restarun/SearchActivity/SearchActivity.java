@@ -34,17 +34,15 @@ public class SearchActivity extends FragmentActivity {
 	}
 
 	public void filterButton(View view) {
-		View quickSearchFilterFrag = findViewById(R.id.fragment_filters);
-
 		if (filterOptions == true) {
-			filterAnimation = ObjectAnimator.ofFloat(quickSearchFilterFrag,
-					"translationY", -160.0f);
+			filterAnimation = ObjectAnimator.ofFloat(view,
+					"translationY", -100.0f);
 			filterAnimation.start();
 
 			filterOptions = false;
 
 		} else {
-			filterAnimation = ObjectAnimator.ofFloat(quickSearchFilterFrag,
+			filterAnimation = ObjectAnimator.ofFloat(view,
 					"translationY", 0.0f);
 			filterAnimation.start();
 
@@ -77,7 +75,6 @@ public class SearchActivity extends FragmentActivity {
 		SearchFragment searchFragment = new SearchFragment();
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.topView, searchFragment).commit();
-
 	}
 
 	/**

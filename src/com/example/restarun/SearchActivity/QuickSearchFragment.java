@@ -8,11 +8,12 @@ import java.util.Iterator;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -23,14 +24,11 @@ import com.example.restarun.gpsTracker.LocationFinder;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
 
-public class QuickSearchFragment extends Fragment {
+public class QuickSearchFragment extends Fragment implements AnimationListener {
 
 	private View searchView;
 
 	public static final String EXTRA_MESSAGE = "EXTRA_MESSAGE";
-
-	private ViewPager mPager;
-	private PagerAdapter mPagerAdapter;
 
 	private Location m_location;
 
@@ -46,6 +44,9 @@ public class QuickSearchFragment extends Fragment {
 
 	private RatingBar ratingBar;
 
+	private TranslateAnimation trans;
+	private Place place;
+	
 	public void ratingSort(View view) {
 		if (m_places.isEmpty())
 			return;
@@ -76,12 +77,7 @@ public class QuickSearchFragment extends Fragment {
 		distanceField.setText(new DecimalFormat("##.##").format(m_place
 				.getDistance()) + " miles away");
 		ratingBar.setRating((float) m_place.getRating());
-		if (m_place.getPhoto() != null) {
-			locImg.setImageURI(m_place.getPhoto());
-
-		} else {
-			locImg.setImageResource(R.drawable.no_photos_available);
-		}
+		
 	}
 
 	@Override
@@ -91,7 +87,9 @@ public class QuickSearchFragment extends Fragment {
 		/** Sets the current view **/
 		searchView = inflater.inflate(R.layout.fragment_quicksearch, container,
 				false);
-
+		trans = new TranslateAnimation(0,-500,0,0);
+		trans.setDuration(500);
+		
 		locImg = (ImageView) searchView.findViewById(R.id.imageView1);
 		nameField = (TextView) searchView.findViewById(R.id.name);
 		addressField = (TextView) searchView.findViewById(R.id.address);
@@ -117,16 +115,46 @@ public class QuickSearchFragment extends Fragment {
 		locImg.setOnTouchListener(new OnSwipeTouchListener(locImg.getContext()) {
 
 			public void onSwipeRight() {
+				System.exit(0);
 			}
 
 			public void onSwipeLeft() {
 				if (m_iterator.hasNext()) {
-					displayPlace(m_iterator.next());
+					place = m_iterator.next();
+					displayPlace(place);
+					locImg.startAnimation(trans);
 				}
 			}
 		});
+		
 		return searchView;
 
+	}
+
+	@Override
+	public void onAnimationStart(Animation animation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAnimationEnd(Animation animation) {
+		
+			locImg.setVisibility(ImageView.GONE);
+			
+			if (place.getPhoto() != null) {
+				locImg.setImageURI(place.getPhoto());
+			} else {
+				locImg.setImageResource(R.drawable.no_photos_available);
+			}		
+			locImg.setVisibility(ImageView.VISIBLE);
+		
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation animation) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

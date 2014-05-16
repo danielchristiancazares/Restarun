@@ -1,4 +1,4 @@
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
@@ -18,7 +18,6 @@
             android:layout_gravity="center_horizontal"
             android:contentDescription="@string/business_image"
             android:src="@android:drawable/editbox_dropdown_light_frame" />
-
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
@@ -55,4 +54,4 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
-</HorizontalScrollView>
+</RelativeLayout>
