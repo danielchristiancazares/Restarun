@@ -16,7 +16,6 @@ import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * @author danielcazares
@@ -65,7 +64,6 @@ public class Yelp extends AsyncTask<Void, Void, String> {
 
 	@Override
 	protected void onPostExecute(String result) {
-		Log.d("DEBUG", result);
 	}
 
 }

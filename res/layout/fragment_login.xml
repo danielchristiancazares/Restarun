@@ -7,10 +7,9 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="15dp"
         android:layout_marginTop="60dp"
         android:orientation="horizontal" >
 
@@ -18,7 +17,12 @@
             android:id="@+id/logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/appicon" />
+            android:layout_gravity="center_vertical"
+            android:adjustViewBounds="true"
+            android:maxHeight="75dp"
+            android:maxWidth="75dp"
+            android:padding="10dp"
+            android:src="@drawable/app_icon" />
 
         <TextView
             android:id="@+id/title"
@@ -27,8 +31,67 @@
             android:layout_gravity="center_vertical"
             android:text="Restarun"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="50sp" />
+            android:textSize="40sp" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/login"
+        android:orientation="vertical"
+        android:padding="7dp" >
+
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="1dp"
+            android:background="@drawable/login_button"
+            android:ems="10"
+            android:hint="Username"
+            android:padding="5dp" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="1dp"
+            android:background="@drawable/login_button"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:padding="5dp" />
+
+        <LinearLayout
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/buttons" >
+
+            <ImageView
+                android:id="@+id/foodImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#0000"
+                android:clickable="false"
+                android:src="@drawable/food" />
+
+            <TextView
+                android:id="@+id/textView1"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#0000"
+                android:clickable="false"
+                android:text="Sign In"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -57,13 +120,12 @@
             android:layout_margin="2dp"
             android:layout_weight="0.5"
             android:background="@drawable/buttons"
-            android:onClick="guestLogin"
             android:drawablePadding="10dp"
+            android:onClick="guestLogin"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="Guest Login"
-            android:textAppearance="?android:attr/textAppearanceSmallInverse"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 
 </LinearLayout>

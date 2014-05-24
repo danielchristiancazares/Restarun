@@ -8,8 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.location.Location;
-import android.os.Bundle;
-import android.util.Log;
 
 public class YelpAPI {
 
@@ -72,7 +70,6 @@ public class YelpAPI {
 						"distance").toString()) / 1609.34;
 				Place newPlace = new Place(m_Name, m_Rating, m_Address,
 						m_Distance, m_Category, m_SortableCat);
-				Log.d("DEBUG", m_Name);
 				foundPlaces.add(newPlace);
 			}
 		} catch (JSONException e) {

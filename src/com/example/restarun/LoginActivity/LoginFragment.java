@@ -17,11 +17,13 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,6 +41,8 @@ public class LoginFragment extends Fragment {
 
 	private LoginButton authButton;
 	private Button guestButton;
+	private ImageView foodImageView;
+
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 
@@ -67,6 +71,8 @@ public class LoginFragment extends Fragment {
 		/** Find the Facebook login button to edit functionality and permissions **/
 		authButton = (LoginButton) loginView.findViewById(R.id.authButton);
 		guestButton = (Button) loginView.findViewById(R.id.guestButton);
+		foodImageView = (ImageView) loginView.findViewById(R.id.foodImageView);
+
 
 		/** To use a LoginButton inside a fragment, we call setFragment on it **/
 		authButton.setFragment(this);
@@ -77,6 +83,7 @@ public class LoginFragment extends Fragment {
 		authButton.setBackgroundResource(R.drawable.buttons);
 
 		guestButton.setTextColor(Color.WHITE);
+
 		Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
 				"fonts/Roboto-Regular.ttf");
 		authButton.setTypeface(font);
@@ -94,19 +101,33 @@ public class LoginFragment extends Fragment {
 		guestIcon.setBounds(0, 0, 40, 40);
 		guestButton.setCompoundDrawables(guestIcon, null, null, null);
 
+		Drawable foodIcon = getResources().getDrawable(R.drawable.food);
+		foodIcon.setColorFilter(new LightingColorFilter(Color.WHITE,
+				Color.WHITE));
+		foodIcon.setBounds(0, 0, 40, 40);
+		foodImageView.setImageDrawable(foodIcon);
+		
+		EditText username = (EditText) loginView.findViewById(R.id.username);
+		EditText password = (EditText) loginView.findViewById(R.id.password);
+		
+		username.setTypeface(font);
+		password.setTypeface(font);
+		password.setTransformationMethod(new PasswordTransformationMethod());
+		
+/*		
 		ImageView img1 = (ImageView) loginView.findViewById(R.id.logo);
 
 		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.appicon);
+				R.drawable.app_icon);
 
-		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-				bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+		Bitmap output = Bitmap.createBitmap(200,
+				200, Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(output);
         final int color = 0xff424242;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final Rect rect = new Rect(0, 0, 160, 160);
         final RectF rectF = new RectF(rect);
-        final float roundPx = 120;
+        final float roundPx = 20;
 
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
@@ -116,7 +137,7 @@ public class LoginFragment extends Fragment {
         paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
 
-		img1.setImageBitmap(output);
+		img1.setImageBitmap(output);*/
 		return loginView;
 	}
 

@@ -4,4 +4,7 @@
         <ignore path="src/com/example/restarun/SearchFragment.java" />
         <ignore path="src/com/example/restarun/googleplaces/PlacesAPI.java" />
     </issue>
+    <issue id="ValidFragment" severity="ignore">
+        <ignore path="src/com/example/restarun/ImageFragment.java" />
+    </issue>
 </lint>
