@@ -1,7 +1,5 @@
 package com.example.restarun.SearchActivity;
 
-import java.util.Collections;
-
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +9,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 
 import com.example.restarun.R;
-import com.example.yelp.Place;
 
 public class SearchActivity extends FragmentActivity {
 	private QuickSearchFragment quickSearchFrag;

@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.example.restarun.OnSwipeTouchListener;
 import com.example.restarun.R;
-import com.example.restarun.gpsTracker.LocationFinder;
+import com.example.restarun.gpsTracker.ServiceGPS;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
 
@@ -97,7 +97,7 @@ public class QuickSearchFragment extends Fragment implements AnimationListener {
 		ratingBar = (RatingBar) searchView.findViewById(R.id.ratingBar);
 		ratingBar.setIsIndicator(true);
 
-		m_location = new LocationFinder(getActivity()).getLocation();
+		m_location = new ServiceGPS(getActivity()).getLocation();
 		m_places = new YelpAPI().getPlaces(m_location, "restaurant");
 		m_iterator = m_places.iterator();
 		displayPlace(m_iterator.next());

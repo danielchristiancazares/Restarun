@@ -1,8 +1,5 @@
-/** Application package definition **/
 package com.example.restarun.LoginActivity;
 
-/** Android-specific imports **/
-/** Java-specific imports **/
 import java.util.UUID;
 
 import android.content.Context;
@@ -15,15 +12,7 @@ import android.view.View;
 import com.example.restarun.R;
 import com.example.restarun.SearchActivity.SearchActivity;
 
-/**
- * @author danielcazares
- * @class: MainActivity
- * @superclass: FragmentActivity
- * @function_protypes: public String getDeviceId();
- * @description: MainActivity is the container for the entire application and
- *               its fragments. This is the main class used to switch and pass
- *               data between fragments.
- */
+
 public class MainActivity extends FragmentActivity {
 
 	private LoginFragment loginFragment;
