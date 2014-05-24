@@ -72,26 +72,10 @@ public class SearchActivity extends FragmentActivity {
 		SearchFragment searchFragment = new SearchFragment();
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.topView, searchFragment).commit();
+		
+		android.app.ActionBar actionBar = getActionBar();
+		actionBar.hide();
 	}
 
-	/**
-	 * A simple pager adapter that represents 5 ScreenSlidePageFragment objects,
-	 * in sequence.
-	 */
-	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-		public ScreenSlidePagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			return new QuickSearchFragment();
-		}
-
-		@Override
-		public int getCount() {
-			return NUM_PAGES;
-		}
-	}
 
 }

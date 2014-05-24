@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -97,6 +99,18 @@ public class QuickSearchFragment extends Fragment implements AnimationListener {
 		ratingBar = (RatingBar) searchView.findViewById(R.id.ratingBar);
 		ratingBar.setIsIndicator(true);
 
+		Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Regular.ttf");
+		Typeface font2 = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+
+		nameField.setTextColor(Color.WHITE);
+		nameField.setTypeface(font);
+		
+		addressField.setTextColor(Color.WHITE);
+		addressField.setTypeface(font2);
+		
+		distanceField.setTextColor(Color.WHITE);
+		distanceField.setTypeface(font2);
+		
 		m_location = new ServiceGPS(getActivity()).getLocation();
 		m_places = new YelpAPI().getPlaces(m_location, "restaurant");
 		m_iterator = m_places.iterator();
@@ -145,7 +159,7 @@ public class QuickSearchFragment extends Fragment implements AnimationListener {
 			if (place.getPhoto() != null) {
 				locImg.setImageURI(place.getPhoto());
 			} else {
-				locImg.setImageResource(R.drawable.no_photos_available);
+				locImg.setImageResource(R.drawable.no_photo);
 			}		
 			locImg.setVisibility(ImageView.VISIBLE);
 		

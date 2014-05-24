@@ -5,7 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="app_id">307490819400352</string>
-    <string name="login_as_guest">Log in with Guest account</string>
+    <string name="login_as_guest">Log in as Guest</string>
     <string name="logged_guest">Welcome, Guest!</string>
     <string name="choose_this">Choose This!</string>
     <string name="see_another">See Another</string>
@@ -16,5 +16,6 @@
     <string name="end_of_list">End of the list</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_activity_slider_fragment">SliderFragment</string>
-
+    <string name="emptyString"></string>
+    
 </resources>

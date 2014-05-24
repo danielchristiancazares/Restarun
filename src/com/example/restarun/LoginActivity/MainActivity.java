@@ -12,7 +12,6 @@ import android.view.View;
 import com.example.restarun.R;
 import com.example.restarun.SearchActivity.SearchActivity;
 
-
 public class MainActivity extends FragmentActivity {
 
 	private LoginFragment loginFragment;
@@ -71,6 +70,9 @@ public class MainActivity extends FragmentActivity {
 		loginFragment = new LoginFragment();
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.container, loginFragment).commit();
+
+		android.app.ActionBar actionBar = getActionBar();
+		actionBar.hide();
 
 	}
 

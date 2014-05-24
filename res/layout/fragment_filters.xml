@@ -2,16 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_filters"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="0dp" >
+    android:paddingLeft="10dp" >
 
     <TextView
         android:id="@+id/sortBy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sort By: "
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#FFFFFF" />
 
     <RadioGroup
         android:id="@+id/radioGroup1"
@@ -24,14 +25,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="ratingSort"
-            android:text="Rating" />
+            android:text="Rating"
+            android:textColor="#FFFFFF" />
 
         <RadioButton
             android:id="@+id/distanceRadio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="distanceSort"
-            android:text="Distance" />
+            android:text="Distance"
+            android:textColor="#FFFFFF" />
     </RadioGroup>
 
 </LinearLayout>

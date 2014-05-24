@@ -3,12 +3,27 @@ package com.example.restarun.LoginActivity;
 import java.util.Arrays;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LightingColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.restarun.R;
 import com.facebook.Session;
@@ -23,6 +38,7 @@ public class LoginFragment extends Fragment {
 	private UiLifecycleHelper uihelper;
 
 	private LoginButton authButton;
+	private Button guestButton;
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 
@@ -50,6 +66,7 @@ public class LoginFragment extends Fragment {
 
 		/** Find the Facebook login button to edit functionality and permissions **/
 		authButton = (LoginButton) loginView.findViewById(R.id.authButton);
+		guestButton = (Button) loginView.findViewById(R.id.guestButton);
 
 		/** To use a LoginButton inside a fragment, we call setFragment on it **/
 		authButton.setFragment(this);
@@ -57,7 +74,49 @@ public class LoginFragment extends Fragment {
 		/** Edit the permissions of the Login button to access Likes and Status **/
 		authButton.setReadPermissions(Arrays
 				.asList("user_likes", "user_status"));
+		authButton.setBackgroundResource(R.drawable.buttons);
 
+		guestButton.setTextColor(Color.WHITE);
+		Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
+				"fonts/Roboto-Regular.ttf");
+		authButton.setTypeface(font);
+		guestButton.setTypeface(font);
+
+		TextView title = (TextView) loginView.findViewById(R.id.title);
+		title.setTextColor(Color.WHITE);
+		Typeface titleFont = Typeface.createFromAsset(
+				getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+		title.setTypeface(titleFont);
+
+		Drawable guestIcon = getResources().getDrawable(R.drawable.guest);
+		guestIcon.setColorFilter(new LightingColorFilter(Color.WHITE,
+				Color.WHITE));
+		guestIcon.setBounds(0, 0, 40, 40);
+		guestButton.setCompoundDrawables(guestIcon, null, null, null);
+
+		ImageView img1 = (ImageView) loginView.findViewById(R.id.logo);
+
+		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+				R.drawable.appicon);
+
+		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+				bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(output);
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = 120;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+		img1.setImageBitmap(output);
 		return loginView;
 	}
 

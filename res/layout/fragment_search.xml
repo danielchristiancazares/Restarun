@@ -11,8 +11,11 @@
         android:layout_alignBottom="@+id/advancedSearch"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="55dp"
+        android:background="@drawable/buttons"
         android:gravity="center"
         android:onClick="quickSearch"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
         android:text="@string/quick_search" />
 
     <Button
@@ -22,6 +25,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="188dp"
+        android:background="@drawable/buttons"
         android:gravity="center"
         android:onClick="advancedSearch"
         android:text="@string/advanced_search" />
