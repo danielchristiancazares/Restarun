@@ -5,76 +5,83 @@ import java.util.Comparator;
 import android.net.Uri;
 
 public class Place {
-	private String m_name;
-	private String m_address;
-	private String m_category;
-	private String m_sortableCat;
-	
-	private double m_rating;
-	private double m_distance;
-	
-	private Uri m_photoURI;
+    private String m_name;
+    private String m_address;
+    private String m_category;
+    private String m_sortableCat;
+    private String m_imageURL;
 
+    private double m_rating;
+    private double m_distance;
 
-	public Place(String pName, double pRating, String pAddress, double pDistance, String pCat, String pSortCat) {
-		this.m_address = pAddress;
-		this.m_rating = pRating;
-		this.m_name = pName;
-		this.m_distance = pDistance;
-		this.m_category = pCat;
-		this.m_sortableCat = pSortCat;
-	}
+    public Place(String pName, double pRating, String pAddress,
+            double pDistance, String pCat, String pSortCat, String pImageURL) {
+        m_address = pAddress;
+        m_rating = pRating;
+        m_name = pName;
+        m_distance = pDistance;
+        m_category = pCat;
+        m_sortableCat = pSortCat;
+        setImageURL( pImageURL );
+    }
+    // Accessors
+    public String getName() {
+        return m_name;
+    }
 
-	public String getName() {
-		return m_name;
-	}
+    public double getRating() {
+        return m_rating;
+    }
 
-	public double getRating() {
-		return m_rating;
-	}
+    public String getAddress() {
+        return m_address;
+    }
 
-	public String getAddress() {
-		return m_address;
-	}
-	
-	public String getCategory() {
-		return m_category;
-	}
+    public String getCategory() {
+        return m_category;
+    }
 
-	public String getSortCat() {
-		return m_sortableCat;
-	}
-	
-	public Uri getPhoto() {
-		return m_photoURI;
-	}
+    public String getSortCat() {
+        return m_sortableCat;
+    }
 
-	public double getDistance() {
-		return m_distance;
-	}
+    public String getPhoto() {
+        return getImageURL();
+    }
 
-	public static Comparator<Place> ratingComparator = new Comparator<Place>() {
+    public double getDistance() {
+        return m_distance;
+    }
 
-		public int compare(Place firstPlace, Place secondPlace) {
-			double firstRating = firstPlace.getRating();
-			double secondRating = secondPlace.getRating();
+    public String getImageURL() {
+        return m_imageURL;
+    }
+    public void setImageURL(String pImageURL) {
+        m_imageURL = pImageURL;
+    }
 
-			return firstRating < secondRating ? 1 : -1;
+    public static Comparator<Place> ratingComparator = new Comparator<Place>() {
 
-		}
-	};
+        public int compare(Place firstPlace, Place secondPlace) {
+            double firstRating = firstPlace.getRating();
+            double secondRating = secondPlace.getRating();
 
-	/* Comparator for sorting the list by roll no */
-	public static Comparator<Place> distanceComparator = new Comparator<Place>() {
+            return firstRating < secondRating ? 1 : -1;
 
-		public int compare(Place firstPlace, Place secondPlace) {
+        }
+    };
 
-			double firstDist = firstPlace.getDistance();
-			double secondDist = secondPlace.getDistance();
+    /* Comparator for sorting the list by roll no */
+    public static Comparator<Place> distanceComparator = new Comparator<Place>() {
 
-			return firstDist > secondDist ? 1 : -1;
+        public int compare(Place firstPlace, Place secondPlace) {
 
-		}
-	};
+            double firstDist = firstPlace.getDistance();
+            double secondDist = secondPlace.getDistance();
+
+            return firstDist > secondDist ? 1 : -1;
+
+        }
+    };
 
 }
