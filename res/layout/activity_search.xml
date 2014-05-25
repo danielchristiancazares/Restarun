@@ -7,6 +7,13 @@
     android:gravity="top"
     tools:context="com.example.restarun.LoginActivity.SearchActivity" >
 
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/login_bg" />
+
     <LinearLayout
         android:id="@+id/topView"
         android:layout_width="match_parent"
