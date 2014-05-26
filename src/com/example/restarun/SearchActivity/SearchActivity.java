@@ -75,7 +75,6 @@ public class SearchActivity extends ActionBarActivity {
 
         int getPos = mPager.getCurrentItem();
         Place curPlace = mPlaces.get( getPos );
-        Log.d( "DEBUG", getPos + "" );
         // Supply num input as an argument.
         Bundle args = new Bundle();
 
@@ -85,7 +84,9 @@ public class SearchActivity extends ActionBarActivity {
         args.putDouble( "rating", curPlace.getRating() );
         args.putDouble( "distance", curPlace.getDistance() );
         mIntent.putExtras( args );
-        startActivityForResult( mIntent, 0 );
+        finish();
+
+        startActivity( mIntent );
     }
 
 
@@ -149,12 +150,12 @@ public class SearchActivity extends ActionBarActivity {
 
     public static class QuickSearchFragment extends Fragment {
 
-        private String mName;
-        private String mImageURL;
-        private String mAddress;
-        private String mNumber;
-        private double mRating;
-        private double mDistance;
+        private static String mName;
+        private static String mImageURL;
+        private static String mAddress;
+        private static String mNumber;
+        private static double mRating;
+        private static double mDistance;
 
         private DownloadImage imgTask;
 

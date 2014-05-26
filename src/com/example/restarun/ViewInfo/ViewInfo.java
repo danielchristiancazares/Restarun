@@ -26,6 +26,8 @@ public class ViewInfo extends ActionBarActivity {
     private String m_number;
     private Double m_latitude;
     private Double m_longitude;
+    
+    private static GoogleMap googleMap;
 
     public void endTask(View view) {
         finish();
@@ -47,7 +49,7 @@ public class ViewInfo extends ActionBarActivity {
         address.setText( m_address );
         number.setText( m_number );
 
-        GoogleMap googleMap = ((MapFragment) getFragmentManager()
+        googleMap = ((MapFragment) getFragmentManager()
                 .findFragmentById( R.id.map )).getMap();
         Geocoder coder = new Geocoder( this );
         Address location = null;
@@ -86,4 +88,11 @@ public class ViewInfo extends ActionBarActivity {
         inflater.inflate( R.menu.main, menu );
         return super.onCreateOptionsMenu( menu );
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
 }
