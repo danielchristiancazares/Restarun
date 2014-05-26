@@ -1,5 +1,6 @@
 package com.example.yelp;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -37,7 +38,7 @@ public class YelpAPI {
             // Store the entire array of businesses
             JSONArray businesses = m_JSONResponse.getJSONArray( "businesses" );
 
-            int j;
+            int j, k;
             for ( int i = 0; i < businesses.length(); ++i ) {
                 // Store the current business object
                 JSONObject m_business = businesses.getJSONObject( i );
@@ -48,19 +49,7 @@ public class YelpAPI {
                 // Store the address
                 JSONArray m_displayAddress = m_location
                         .getJSONArray( "display_address" );
-                // Store the deals
-                JSONArray m_deals = null;
-                try
-                {
-                    m_deals = m_business.getJSONArray( "deals" );
-                }
-                catch(JSONException e)
-                {
-                    Log.w("Restarun.err", "No value for deals");
-                }
-                if ( m_deals != null ) {
-                    Log.d( "Restarun.dbg", "Deal found" );
-                }
+
                 StringBuilder m_AddressString = new StringBuilder();
                 for ( j = 0; j < m_displayAddress.length() - 1; ++j ) {
                     m_AddressString.append( m_displayAddress.get( j )
@@ -75,12 +64,39 @@ public class YelpAPI {
                 String Name = m_business.get( "name" ).toString();
                 String ImageURL = m_business.get( "image_url" ).toString();
                 String Address = m_AddressString.toString();
+                String Number = m_business.get( "display_phone" ).toString();
+                // Store the deals
+                Deal m_newDeal = null;
+                try {
+                    JSONArray m_deals = m_business.getJSONArray( "deals" );
+                    if ( m_deals != null ) {
+                        for ( k = 0; k < m_deals.length(); ++k ) {
+                            String deal_id = m_deals.getJSONObject( k )
+                                    .get( "id" ).toString();
+                            String deal_title = m_deals.getJSONObject( k )
+                                    .get( "title" ).toString();
+                            String deal_url = m_deals.getJSONObject( k )
+                                    .get( "url" ).toString();
+                            String deal_start = m_deals.getJSONObject( k )
+                                    .get( "time_start" ).toString();
+                            m_newDeal = new Deal( deal_id, deal_title,
+                                    deal_url, deal_start );
+                        }
+                        Log.d( "Restarun.dbg", m_deals.length() + " deals found for " + Name );
+                    }
+                } catch (JSONException e) {
+                    Log.w( "Restarun.err", "No value for deals" );
+                }
+
                 double Rating = Float.parseFloat( m_business.get( "rating" )
                         .toString() );
                 double Distance = Double.parseDouble( m_business.get(
                         "distance" ).toString() ) / 1609.34;
                 Place newPlace = new Place( Name, Rating, Address, Distance,
-                        Category, SortableCategory, ImageURL );
+                        Category, SortableCategory, ImageURL, Number );
+                if ( m_newDeal != null ) {
+                    newPlace.setDeal( m_newDeal );
+                }
                 foundPlaces.add( newPlace );
             }
         } catch (JSONException e) {

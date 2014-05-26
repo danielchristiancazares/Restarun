@@ -81,7 +81,7 @@ public class SearchActivity extends ActionBarActivity {
         
         args.putString( "name", curPlace.getName() );
         args.putString( "address", curPlace.getAddress() );
-        args.putString( "imageurl", curPlace.getImageURL() );
+        args.putString( "number", curPlace.getNumber() );
         args.putDouble( "rating", curPlace.getRating() );
         args.putDouble( "distance", curPlace.getDistance() );
         mIntent.putExtras(args);
@@ -154,6 +154,7 @@ public class SearchActivity extends ActionBarActivity {
         private String mName;
         private String mImageURL;
         private String mAddress;
+        private String mNumber;
         private double mRating;
         private double mDistance;
 
@@ -168,6 +169,7 @@ public class SearchActivity extends ActionBarActivity {
             args.putString( "name", p.getName() );
             args.putString( "address", p.getAddress() );
             args.putString( "imageurl", p.getImageURL() );
+            args.putString( "number", p.getNumber() );
             args.putDouble( "rating", p.getRating() );
             args.putDouble( "distance", p.getDistance() );
             frag.setArguments( args );
@@ -183,6 +185,7 @@ public class SearchActivity extends ActionBarActivity {
             mName = getArguments().getString( "name" );
             mAddress = getArguments().getString( "address" );
             mImageURL = getArguments().getString( "imageurl" );
+            mNumber = getArguments().getString( "number" );
             mRating = getArguments().getDouble( "rating" );
             mDistance = getArguments().getDouble( "distance" );
 

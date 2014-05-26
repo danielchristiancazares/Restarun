@@ -1,6 +1,9 @@
 package com.example.yelp;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+
+import android.util.Log;
 
 public class Place {
     private String m_name;
@@ -8,20 +11,30 @@ public class Place {
     private String m_category;
     private String m_sortableCat;
     private String m_imageURL;
-
+    private String m_number;
+    
     private double m_rating;
     private double m_distance;
+    
+    private ArrayList<Deal> m_deals = new ArrayList<Deal>();
+
 
     public Place(String pName, double pRating, String pAddress,
-            double pDistance, String pCat, String pSortCat, String pImageURL) {
+            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber) {
         m_address = pAddress;
         m_rating = pRating;
         m_name = pName;
         m_distance = pDistance;
         m_category = pCat;
         m_sortableCat = pSortCat;
+        m_number = pNumber;
         setImageURL( pImageURL );
     }
+
+    public void setDeal(Deal pDeal) {
+        m_deals.add( pDeal );
+    }
+
     // Accessors
     public String getName() {
         return m_name;
@@ -33,6 +46,10 @@ public class Place {
 
     public String getAddress() {
         return m_address;
+    }
+    
+    public String getNumber() {
+        return m_number;
     }
 
     public String getCategory() {
@@ -54,6 +71,7 @@ public class Place {
     public String getImageURL() {
         return m_imageURL;
     }
+
     public void setImageURL(String pImageURL) {
         m_imageURL = pImageURL;
     }
@@ -81,5 +99,6 @@ public class Place {
 
         }
     };
+
 
 }
