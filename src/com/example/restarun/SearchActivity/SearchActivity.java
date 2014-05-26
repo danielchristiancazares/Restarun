@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,12 +18,14 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -30,21 +33,25 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.restarun.R;
+import com.example.restarun.ViewInfo.ViewInfo;
 import com.example.restarun.gpsTracker.ServiceGPS;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
 
-public class SearchActivity extends FragmentActivity {
-    private QuickSearchFilterFragment quickSearchFilterFrag;
+public class SearchActivity extends ActionBarActivity {
+    private static QuickSearchFilterFragment quickSearchFilterFrag;
 
-    private Location m_location;
+    private static Location m_location;
 
     private static ArrayList<Place> mPlaces;
-    private ArrayList<String> m_categories;
+    private static ArrayList<String> m_categories;
 
-    private MyAdapter mAdapter;
-    private ViewPager mPager;
+    private static MyAdapter mAdapter;
+    private static ViewPager mPager;
 
+    /*
+     * Button onClick() functions
+     */
     public void ratingSort(View view) {
         if ( mPlaces.isEmpty() )
             return;
@@ -63,8 +70,22 @@ public class SearchActivity extends FragmentActivity {
         mPager.setAdapter( mAdapter );
     }
 
-    public void quickSearch(View view) {
-
+    public void getInfo(View view) {
+        Intent mIntent = new Intent( this, ViewInfo.class );
+        
+        int getPos = mPager.getCurrentItem();
+        Place curPlace = mPlaces.get( getPos );
+        Log.d("DEBUG",getPos + "");
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        
+        args.putString( "name", curPlace.getName() );
+        args.putString( "address", curPlace.getAddress() );
+        args.putString( "imageurl", curPlace.getImageURL() );
+        args.putDouble( "rating", curPlace.getRating() );
+        args.putDouble( "distance", curPlace.getDistance() );
+        mIntent.putExtras(args);
+        startActivityForResult( mIntent, 0 );
     }
 
     public void advancedSearch(View view) {
@@ -81,9 +102,6 @@ public class SearchActivity extends FragmentActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace( R.id.botView, quickSearchFilterFrag ).commit();
 
-        android.app.ActionBar actionBar = getActionBar();
-        actionBar.hide();
-
         m_location = new ServiceGPS( this ).getLocation();
         mPlaces = new YelpAPI().getPlaces( m_location, "restaurant" );
 
@@ -91,34 +109,30 @@ public class SearchActivity extends FragmentActivity {
         mPager = (ViewPager) findViewById( R.id.pager );
         mPager.setAdapter( mAdapter );
 
-        /*
-         * m_categories = new ArrayList<String>(); for (Place aPlace : m_places)
-         * { if (m_categories.contains(aPlace.getCategory())) { continue; }
-         * 
-         * m_categories.add(aPlace.getCategory());
-         * 
-         * }
-         * 
-         * locImg.setOnTouchListener(new
-         * OnSwipeTouchListener(locImg.getContext()) {
-         * 
-         * public void onSwipeRight() { System.exit(0); }
-         * 
-         * public void onSwipeLeft() { if (m_iterator.hasNext()) { place =
-         * m_iterator.next(); displayPlace(place); locImg.startAnimation(trans);
-         * } } });
-         */
+        m_categories = new ArrayList<String>();
+        for ( Place aPlace : mPlaces ) {
+            if ( m_categories.contains( aPlace.getCategory() ) ) {
+                continue;
+            }
+
+            m_categories.add( aPlace.getCategory() );
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate( R.menu.main, menu );
+        return super.onCreateOptionsMenu( menu );
     }
 
     public static class MyAdapter extends FragmentStatePagerAdapter {
-
-        ArrayList<Fragment> pageViews = new ArrayList<Fragment>();
+        ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
 
         public MyAdapter(FragmentManager fm) {
             super( fm );
-            for ( int i = 0; pageViews.size() != mPlaces.size(); ++i ) {
-                pageViews
-                        .add( QuickSearchFragment.newInstance( mPlaces.get( i ) ) );
+            for ( int i = 0; mFragments.size() != mPlaces.size(); ++i ) {
+                mFragments.add( QuickSearchFragment.newInstance( i ) );
             }
         }
 
@@ -130,29 +144,25 @@ public class SearchActivity extends FragmentActivity {
         @Override
         public Fragment getItem(int position) {
 
-            return pageViews.get( position );
+            return mFragments.get( position );
         }
 
     }
 
     public static class QuickSearchFragment extends Fragment {
 
-        private ImageView locImg;
-
-        private TextView nameField;
-        private TextView addressField;
-        private TextView distanceField;
-
-        private RatingBar ratingBar;
-
         private String mName;
-        private String mAddress;
         private String mImageURL;
+        private String mAddress;
         private double mRating;
         private double mDistance;
 
-        static QuickSearchFragment newInstance(Place p) {
-            QuickSearchFragment quickSearchFrag = new QuickSearchFragment();
+        private DownloadImage imgTask;
+
+        static QuickSearchFragment newInstance(int num) {
+            QuickSearchFragment frag = new QuickSearchFragment();
+
+            Place p = mPlaces.get( num );
             // Supply num input as an argument.
             Bundle args = new Bundle();
             args.putString( "name", p.getName() );
@@ -160,17 +170,10 @@ public class SearchActivity extends FragmentActivity {
             args.putString( "imageurl", p.getImageURL() );
             args.putDouble( "rating", p.getRating() );
             args.putDouble( "distance", p.getDistance() );
-            quickSearchFrag.setArguments( args );
+            frag.setArguments( args );
 
-            return quickSearchFrag;
+            return frag;
         }
-
-        /*
-         * public void setPlace(Place pPlace) { m_place = pPlace;
-         * 
-         * nameField.setText(m_place.getName());
-         * addressField.setText(m_place.getAddress()); }
-         */
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -182,50 +185,50 @@ public class SearchActivity extends FragmentActivity {
             mImageURL = getArguments().getString( "imageurl" );
             mRating = getArguments().getDouble( "rating" );
             mDistance = getArguments().getDouble( "distance" );
+
+            imgTask = new DownloadImage();
+
+            imgTask.execute( mImageURL );
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View searchView = inflater.inflate( R.layout.fragment_quicksearch,
+            View view = inflater.inflate( R.layout.fragment_quicksearch,
                     container, false );
 
-            locImg = (ImageView) searchView.findViewById( R.id.imageView1 );
-            nameField = (TextView) searchView.findViewById( R.id.name );
-            addressField = (TextView) searchView.findViewById( R.id.address );
-            distanceField = (TextView) searchView.findViewById( R.id.distance );
-            ratingBar = (RatingBar) searchView.findViewById( R.id.ratingBar );
-            ratingBar.setIsIndicator( true );
+            ImageView image = (ImageView) view.findViewById( R.id.imageView1 );
+            TextView name = (TextView) view.findViewById( R.id.name );
+            TextView distance = (TextView) view.findViewById( R.id.distance );
+            RatingBar rating = (RatingBar) view.findViewById( R.id.ratingBar );
+            rating.setIsIndicator( true );
 
             Typeface font = Typeface.createFromAsset(
                     getActivity().getAssets(), "fonts/Roboto-Regular.ttf" );
             Typeface font2 = Typeface.createFromAsset( getActivity()
                     .getAssets(), "fonts/Roboto-Light.ttf" );
 
-            nameField.setTextColor( Color.WHITE );
-            addressField.setTextColor( Color.WHITE );
-            distanceField.setTextColor( Color.WHITE );
+            name.setTextColor( Color.WHITE );
+            distance.setTextColor( Color.WHITE );
 
-            nameField.setTypeface( font );
-            addressField.setTypeface( font2 );
-            distanceField.setTypeface( font2 );
+            name.setTypeface( font );
+            distance.setTypeface( font2 );
 
-            nameField.setText( mName );
-            addressField.setText( mAddress );
-            ratingBar.setRating( (float) mRating );
-            distanceField.setText( new DecimalFormat( "##.##" )
-                    .format( mDistance ) + " miles away" );
-            DownloadImage downloadTask = new DownloadImage();
-            
-            downloadTask.execute( mImageURL );
-            
+            name.setText( mName );
+
+            rating.setRating( (float) mRating );
+
+            DecimalFormat fmtDistance = new DecimalFormat( "##.##" );
+
+            distance.setText( fmtDistance.format( mDistance ) + " miles away" );
+
             try {
-                locImg.setImageBitmap(downloadTask.get());
+                image.setImageBitmap( imgTask.get() );
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
 
-            return searchView;
+            return view;
         }
 
         private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
@@ -241,7 +244,7 @@ public class SearchActivity extends FragmentActivity {
 
                     InputStream input = connection.getInputStream();
                     Bitmap myBitmap = BitmapFactory.decodeStream( input );
-
+                    Log.d( "DEBUG", "Completed!" );
                     return myBitmap;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -251,7 +254,6 @@ public class SearchActivity extends FragmentActivity {
             }
 
             protected void onPostExecute(Bitmap result) {
-                Log.d("DEBUG","Completed!");
             }
 
         }

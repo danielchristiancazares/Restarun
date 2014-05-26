@@ -5,27 +5,23 @@ import java.util.UUID;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 
 import com.example.restarun.R;
 import com.example.restarun.SearchActivity.SearchActivity;
 
-public class MainActivity extends FragmentActivity {
-
-    private LoginFragment loginFragment;
+public class MainActivity extends ActionBarActivity {
 
     public void guestLogin(View view) {
         Intent intent = new Intent( this, SearchActivity.class );
         startActivity( intent );
+        finish();
     }
 
-    /**
-     * @author danielcazares
-     * @function_name: getDeviceId();
-     * @description: getDeviceId() is used to get the device's UDID.
-     **/
     public String getDeviceId() {
         // TelephonyManager objects provide access to different phone services
         final TelephonyManager tm = (TelephonyManager) getBaseContext()
@@ -44,7 +40,7 @@ public class MainActivity extends FragmentActivity {
                 getContentResolver(),
                 android.provider.Settings.Secure.ANDROID_ID );
 
-        /** We use the androidId, tmDevice, and tmSerial to create a unique UDID **/
+        // We use the androidId, tmDevice, and tmSerial to create a unique UDID
         UUID deviceUuid = new UUID( androidId.hashCode(),
                 ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode() );
 
@@ -52,40 +48,17 @@ public class MainActivity extends FragmentActivity {
         return deviceId;
     }
 
-    /**
-     * @author danielcazares
-     * @function_name: onCreate();
-     * @description: onCreate() is a superclass function override called upon
-     *               instantiation of the activity. Additionally, it checks for
-     *               previous saved states and instantiates and adds a new
-     *               loginFragment if none are found or retrieves the previous
-     *               fragment if it's found.
-     **/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
 
         setContentView( R.layout.activity_main );
 
-        loginFragment = new LoginFragment();
+        LoginFragment loginFragment = new LoginFragment();
         getSupportFragmentManager().beginTransaction()
                 .add( R.id.container, loginFragment ).commit();
 
-        android.app.ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-
     }
-
-    /**
-     * @author danielcazares
-     * @function_name: onActivityResult();
-     * @description: This function is called upon exit of this activity.
-     *               Received immediately before onResume() when some other
-     *               activity is resumed.
-     **/
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult( requestCode, resultCode, data );
-    }
-
 }

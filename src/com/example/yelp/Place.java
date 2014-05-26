@@ -2,8 +2,6 @@ package com.example.yelp;
 
 import java.util.Comparator;
 
-import android.net.Uri;
-
 public class Place {
     private String m_name;
     private String m_address;

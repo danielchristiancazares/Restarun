@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.location.Location;
+import android.util.Log;
 
 public class YelpAPI {
 
@@ -47,7 +48,19 @@ public class YelpAPI {
                 // Store the address
                 JSONArray m_displayAddress = m_location
                         .getJSONArray( "display_address" );
-
+                // Store the deals
+                JSONArray m_deals = null;
+                try
+                {
+                    m_deals = m_business.getJSONArray( "deals" );
+                }
+                catch(JSONException e)
+                {
+                    Log.w("Restarun.err", "No value for deals");
+                }
+                if ( m_deals != null ) {
+                    Log.d( "Restarun.dbg", "Deal found" );
+                }
                 StringBuilder m_AddressString = new StringBuilder();
                 for ( j = 0; j < m_displayAddress.length() - 1; ++j ) {
                     m_AddressString.append( m_displayAddress.get( j )
@@ -66,8 +79,8 @@ public class YelpAPI {
                         .toString() );
                 double Distance = Double.parseDouble( m_business.get(
                         "distance" ).toString() ) / 1609.34;
-                Place newPlace = new Place( Name, Rating, Address,
-                        Distance, Category, SortableCategory, ImageURL);
+                Place newPlace = new Place( Name, Rating, Address, Distance,
+                        Category, SortableCategory, ImageURL );
                 foundPlaces.add( newPlace );
             }
         } catch (JSONException e) {

@@ -27,14 +27,13 @@ import com.facebook.widget.LoginButton;
 
 public class LoginFragment extends Fragment {
 
-	private View loginView;
+	private static View loginView;
 
-	private UiLifecycleHelper uihelper;
+	private static UiLifecycleHelper uihelper;
 
-	private LoginButton authButton;
-	private Button guestButton;
-	private ImageView foodImageView;
-
+	private static LoginButton authButton;
+	private static Button guestButton;
+	private static ImageView foodImageView;
 
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 
@@ -45,33 +44,26 @@ public class LoginFragment extends Fragment {
 		}
 	};
 
-	/**
-	 * @author danielcazares
-	 * @function_name: onCreateView();
-	 * @description: onCreateView() is a superclass function override that is
-	 *               called upon instantiation of the view. Additionally, it
-	 *               sets the current view and gives access to layout objects
-	 *               defined within the fragment's layout.
-	 **/
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
-		/** Sets the current view **/
 		loginView = inflater.inflate(R.layout.fragment_login, container, false);
 
-		/** Find the Facebook login button to edit functionality and permissions **/
+		// Store references to the buttons
 		authButton = (LoginButton) loginView.findViewById(R.id.authButton);
 		guestButton = (Button) loginView.findViewById(R.id.guestButton);
 		foodImageView = (ImageView) loginView.findViewById(R.id.foodImageView);
+        TextView title = (TextView) loginView.findViewById(R.id.title);
 
 
-		/** To use a LoginButton inside a fragment, we call setFragment on it **/
+		// Allow the Facebook button to be embeded within a fragment
 		authButton.setFragment(this);
 
-		/** Edit the permissions of the Login button to access Likes and Status **/
+		// Edit the permissions of the Login button to access Likes and Status
 		authButton.setReadPermissions(Arrays
 				.asList("user_likes", "user_status"));
+		
+		// Workaround to change the look of the Facebook button
 		authButton.setBackgroundResource(R.drawable.buttons);
 
 		guestButton.setTextColor(Color.WHITE);
@@ -81,7 +73,6 @@ public class LoginFragment extends Fragment {
 		authButton.setTypeface(font);
 		guestButton.setTypeface(font);
 
-		TextView title = (TextView) loginView.findViewById(R.id.title);
 		title.setTextColor(Color.WHITE);
 		Typeface titleFont = Typeface.createFromAsset(
 				getActivity().getAssets(), "fonts/Roboto-Light.ttf");
@@ -106,30 +97,6 @@ public class LoginFragment extends Fragment {
 		password.setTypeface(font);
 		password.setTransformationMethod(new PasswordTransformationMethod());
 		
-/*		
-		ImageView img1 = (ImageView) loginView.findViewById(R.id.logo);
-
-		Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.app_icon);
-
-		Bitmap output = Bitmap.createBitmap(200,
-				200, Bitmap.Config.ARGB_8888);
-		Canvas canvas = new Canvas(output);
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, 160, 160);
-        final RectF rectF = new RectF(rect);
-        final float roundPx = 20;
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-		img1.setImageBitmap(output);*/
 		return loginView;
 	}
 
