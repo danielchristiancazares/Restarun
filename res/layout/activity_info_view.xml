@@ -38,12 +38,21 @@
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/button1"
+        android:layout_below="@+id/number" />
+
     <Button
         android:id="@+id/button1"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:onClick="endTask"
         android:text="Nevermind" />
 

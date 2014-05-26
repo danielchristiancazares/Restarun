@@ -3,8 +3,6 @@ package com.example.yelp;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import android.util.Log;
-
 public class Place {
     private String m_name;
     private String m_address;

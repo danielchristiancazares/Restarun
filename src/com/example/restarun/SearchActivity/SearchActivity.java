@@ -72,25 +72,23 @@ public class SearchActivity extends ActionBarActivity {
 
     public void getInfo(View view) {
         Intent mIntent = new Intent( this, ViewInfo.class );
-        
+
         int getPos = mPager.getCurrentItem();
         Place curPlace = mPlaces.get( getPos );
-        Log.d("DEBUG",getPos + "");
+        Log.d( "DEBUG", getPos + "" );
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        
+
         args.putString( "name", curPlace.getName() );
         args.putString( "address", curPlace.getAddress() );
         args.putString( "number", curPlace.getNumber() );
         args.putDouble( "rating", curPlace.getRating() );
         args.putDouble( "distance", curPlace.getDistance() );
-        mIntent.putExtras(args);
+        mIntent.putExtras( args );
         startActivityForResult( mIntent, 0 );
     }
 
-    public void advancedSearch(View view) {
 
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

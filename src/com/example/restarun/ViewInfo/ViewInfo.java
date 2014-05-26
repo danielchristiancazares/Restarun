@@ -1,6 +1,10 @@
 package com.example.restarun.ViewInfo;
 
-import android.content.Intent;
+import java.io.IOException;
+import java.util.List;
+
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -9,13 +13,19 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.restarun.R;
-import com.example.yelp.Place;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 
 public class ViewInfo extends ActionBarActivity {
 
     private String m_name;
     private String m_address;
     private String m_number;
+    private Double m_latitude;
+    private Double m_longitude;
 
     public void endTask(View view) {
         finish();
@@ -29,20 +39,45 @@ public class ViewInfo extends ActionBarActivity {
         m_address = getIntent().getExtras().getString( "address" );
         m_number = getIntent().getExtras().getString( "number" );
 
-        
-        TextView name = (TextView) findViewById(R.id.name);
-        TextView address = (TextView) findViewById(R.id.address);
-        TextView number = (TextView) findViewById(R.id.number);
-        
-        name.setText(m_name);
-        address.setText(m_address);
-        number.setText(m_number);
+        TextView name = (TextView) findViewById( R.id.name );
+        TextView address = (TextView) findViewById( R.id.address );
+        TextView number = (TextView) findViewById( R.id.number );
 
-    }
+        name.setText( m_name );
+        address.setText( m_address );
+        number.setText( m_number );
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        GoogleMap googleMap = ((MapFragment) getFragmentManager()
+                .findFragmentById( R.id.map )).getMap();
+        Geocoder coder = new Geocoder( this );
+        Address location = null;
 
+        try {
+
+            List<Address> addressList;
+            addressList = coder.getFromLocationName( m_address, 5 );
+            if ( address != null ) {
+
+                location = addressList.get( 0 );
+                location.getLatitude();
+                location.getLongitude();
+
+            }
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+        if ( location != null ) {
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(
+                            new LatLng( location.getLatitude(), location
+                                    .getLongitude() ) ).zoom( 12 ).build();
+
+            googleMap.moveCamera( CameraUpdateFactory
+                    .newCameraPosition( cameraPosition ) );
+        }
     }
 
     @Override

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 
 import com.example.restarun.R;

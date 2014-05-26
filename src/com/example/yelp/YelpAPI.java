@@ -1,6 +1,5 @@
 package com.example.yelp;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
