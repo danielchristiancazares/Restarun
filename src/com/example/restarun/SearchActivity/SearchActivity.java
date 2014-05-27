@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,8 +53,7 @@ public class SearchActivity extends ActionBarActivity {
             return;
 
         Collections.sort( mPlaces, Place.ratingComparator );
-        mAdapter = new MyAdapter( getSupportFragmentManager() );
-        mPager.setAdapter( mAdapter );
+        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
     }
 
     public void distanceSort(View view) {
@@ -61,8 +61,7 @@ public class SearchActivity extends ActionBarActivity {
             return;
 
         Collections.sort( mPlaces, Place.distanceComparator );
-        mAdapter = new MyAdapter( getSupportFragmentManager() );
-        mPager.setAdapter( mAdapter );
+        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
     }
 
     public void getInfo(View view) {
@@ -82,6 +81,8 @@ public class SearchActivity extends ActionBarActivity {
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
         transaction.show( newFragment );
+        newFragment.m_address = curPlace.getAddress();
+        newFragment.setMap();
         transaction.commit();
 
     }
@@ -89,7 +90,7 @@ public class SearchActivity extends ActionBarActivity {
     public void endTask(View view) {
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
-        transaction.hide(newFragment);
+        transaction.hide( newFragment );
         transaction.commit();
     }
 
@@ -119,9 +120,8 @@ public class SearchActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        mAdapter = new MyAdapter( getSupportFragmentManager() );
         mPager = (ViewPager) findViewById( R.id.pager );
-        mPager.setAdapter( mAdapter );
+        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
     }
 
     @Override
@@ -132,13 +132,14 @@ public class SearchActivity extends ActionBarActivity {
     }
 
     public static class MyAdapter extends FragmentStatePagerAdapter {
-        ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
+        ArrayList<Fragment> mFragments;
 
         public MyAdapter(android.support.v4.app.FragmentManager pFm) {
             super( pFm );
-            for ( Place p : mPlaces ) {
-                mFragments.add( QuickSearchFragment.newInstance( mPlaces
-                        .indexOf( p ) ) );
+            mFragments = new ArrayList<Fragment>();
+            for ( int i = 0; mFragments.size() != mPlaces.size(); ++i ) {
+                Log.d("DEBUG",mPlaces.get(i).m_name);
+                mFragments.add( i, QuickSearchFragment.newInstance( i ) );
             }
         }
 
@@ -157,12 +158,12 @@ public class SearchActivity extends ActionBarActivity {
 
     public static class QuickSearchFragment extends Fragment {
 
-        private static String mName;
-        private static String mImageURL;
-        private static String mAddress;
-        private static String mNumber;
-        private static double mRating;
-        private static double mDistance;
+        private String mName;
+        private String mImageURL;
+        private String mAddress;
+        private String mNumber;
+        private double mRating;
+        private double mDistance;
 
         static QuickSearchFragment newInstance(int num) {
             QuickSearchFragment frag = new QuickSearchFragment();
