@@ -5,6 +5,7 @@ import java.util.UUID;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
@@ -50,12 +51,10 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
-
         setContentView( R.layout.activity_main );
 
-        LoginFragment loginFragment = new LoginFragment();
         getSupportFragmentManager().beginTransaction()
-                .add( R.id.container, loginFragment ).commit();
+                .replace( R.id.container, new LoginFragment() ).commit();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();

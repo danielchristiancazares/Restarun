@@ -20,9 +20,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,21 +33,19 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.restarun.R;
-import com.example.restarun.ViewInfo.ViewInfo;
+import com.example.restarun.LoginActivity.LoginFragment;
+import com.example.restarun.ViewInfo.ViewInfoFragment;
 import com.example.restarun.gpsTracker.ServiceGPS;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
 
 public class SearchActivity extends ActionBarActivity {
-    private static QuickSearchFilterFragment quickSearchFilterFrag;
-
-    private static Location m_location;
-
     private static ArrayList<Place> mPlaces;
-    private static ArrayList<String> m_categories;
 
     private static MyAdapter mAdapter;
     private static ViewPager mPager;
+
+    private static ViewInfoFragment newFragment = new ViewInfoFragment();
 
     /*
      * Button onClick() functions
@@ -71,7 +69,7 @@ public class SearchActivity extends ActionBarActivity {
     }
 
     public void getInfo(View view) {
-        Intent mIntent = new Intent( this, ViewInfo.class );
+        // Create new fragment and transaction
 
         int getPos = mPager.getCurrentItem();
         Place curPlace = mPlaces.get( getPos );
@@ -83,39 +81,50 @@ public class SearchActivity extends ActionBarActivity {
         args.putString( "number", curPlace.getNumber() );
         args.putDouble( "rating", curPlace.getRating() );
         args.putDouble( "distance", curPlace.getDistance() );
-        mIntent.putExtras( args );
-        finish();
 
-        startActivity( mIntent );
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
+        transaction.show( newFragment );
+        transaction.commit();
+
     }
 
-
+    public void endTask(View view) {
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
+        transaction.hide(newFragment);
+        transaction.commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
-
         setContentView( R.layout.activity_search );
 
-        quickSearchFilterFrag = new QuickSearchFilterFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace( R.id.botView, quickSearchFilterFrag ).commit();
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
 
-        m_location = new ServiceGPS( this ).getLocation();
-        mPlaces = new YelpAPI().getPlaces( m_location, "restaurant" );
+        transaction.add( R.id.container, newFragment );
+        transaction.addToBackStack( null );
+        transaction.hide( newFragment );
+        transaction.commit();
+
+        Location m_location = new ServiceGPS( this ).getLocation();
+
+        try {
+            mPlaces = new YelpAPI().execute( m_location.getLatitude(),
+                    m_location.getLongitude() ).get();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         mAdapter = new MyAdapter( getSupportFragmentManager() );
         mPager = (ViewPager) findViewById( R.id.pager );
         mPager.setAdapter( mAdapter );
-
-        m_categories = new ArrayList<String>();
-        for ( Place aPlace : mPlaces ) {
-            if ( m_categories.contains( aPlace.getCategory() ) ) {
-                continue;
-            }
-
-            m_categories.add( aPlace.getCategory() );
-        }
     }
 
     @Override
@@ -128,16 +137,17 @@ public class SearchActivity extends ActionBarActivity {
     public static class MyAdapter extends FragmentStatePagerAdapter {
         ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
 
-        public MyAdapter(FragmentManager fm) {
-            super( fm );
-            for ( int i = 0; mFragments.size() != mPlaces.size(); ++i ) {
-                mFragments.add( QuickSearchFragment.newInstance( i ) );
+        public MyAdapter(android.support.v4.app.FragmentManager pFm) {
+            super( pFm );
+            for ( Place p : mPlaces ) {
+                mFragments.add( QuickSearchFragment.newInstance( mPlaces
+                        .indexOf( p ) ) );
             }
         }
 
         @Override
         public int getCount() {
-            return mPlaces.size();
+            return mFragments.size();
         }
 
         @Override
@@ -156,8 +166,6 @@ public class SearchActivity extends ActionBarActivity {
         private static String mNumber;
         private static double mRating;
         private static double mDistance;
-
-        private DownloadImage imgTask;
 
         static QuickSearchFragment newInstance(int num) {
             QuickSearchFragment frag = new QuickSearchFragment();
@@ -187,10 +195,6 @@ public class SearchActivity extends ActionBarActivity {
             mNumber = getArguments().getString( "number" );
             mRating = getArguments().getDouble( "rating" );
             mDistance = getArguments().getDouble( "distance" );
-
-            imgTask = new DownloadImage();
-
-            imgTask.execute( mImageURL );
         }
 
         @Override
@@ -225,7 +229,8 @@ public class SearchActivity extends ActionBarActivity {
             distance.setText( fmtDistance.format( mDistance ) + " miles away" );
 
             try {
-                image.setImageBitmap( imgTask.get() );
+                image.setImageBitmap( new DownloadImage().execute( mImageURL )
+                        .get() );
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -233,7 +238,8 @@ public class SearchActivity extends ActionBarActivity {
             return view;
         }
 
-        private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
+        private static class DownloadImage extends
+                AsyncTask<String, Void, Bitmap> {
 
             @Override
             protected Bitmap doInBackground(String... strings) {
@@ -246,16 +252,13 @@ public class SearchActivity extends ActionBarActivity {
 
                     InputStream input = connection.getInputStream();
                     Bitmap myBitmap = BitmapFactory.decodeStream( input );
-                    Log.d( "DEBUG", "Completed!" );
+                    connection.disconnect();
                     return myBitmap;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
                 return null;
-            }
-
-            protected void onPostExecute(Bitmap result) {
             }
 
         }

@@ -12,20 +12,18 @@ import android.widget.Button;
 import com.example.restarun.R;
 
 public class SearchFragment extends Fragment {
-
-	private View searchFragment;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		searchFragment = inflater.inflate(R.layout.fragment_search, container, false);
+		View view = inflater.inflate(R.layout.fragment_search, container, false);
 		
-		Button search = (Button) searchFragment.findViewById(R.id.quickSearch);
+		Button search = (Button) view.findViewById(R.id.quickSearch);
 		search.setTextColor(Color.WHITE);
 		Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Regular.ttf");
 		search.setTypeface(font);
 		
-		return searchFragment;
+		return view;
 	}
 }
