@@ -7,14 +7,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
-import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
-import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
     private static final String YELP_CONSUMER_KEY = "kQt6c0n37McCFys-eTKRHw";

@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.restarun.R;
+import com.example.restarun.SearchActivity.SearchActivity;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -110,7 +111,9 @@ public class LoginFragment extends Fragment {
 	private void onSessionStatechange(Session session, SessionState state,
 			Exception exception) {
 		if (state.isOpened()) {
-			Log.i("SESSION STATE CHANGE", "LOGGED IN.");
+	        Intent intent = new Intent( this.getActivity(), SearchActivity.class );
+	        startActivity( intent );
+	        getActivity().finish();
 		} else {
 			Log.i("SESSION STATE CHANGE", "LOGGED OUT.");
 		}

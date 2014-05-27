@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,7 +17,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -33,7 +31,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.restarun.R;
-import com.example.restarun.LoginActivity.LoginFragment;
 import com.example.restarun.ViewInfo.ViewInfoFragment;
 import com.example.restarun.gpsTracker.ServiceGPS;
 import com.example.yelp.Place;
