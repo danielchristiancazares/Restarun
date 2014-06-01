@@ -57,7 +57,7 @@ public class ServiceGPS extends Service implements LocationListener {
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
  
             if (!isGPSEnabled && !isNetworkEnabled) {
-            	
+
             } else {
                 this.canGetLocation = true;
                 // First get location from Network Provider
@@ -83,7 +83,6 @@ public class ServiceGPS extends Service implements LocationListener {
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -112,7 +111,6 @@ public class ServiceGPS extends Service implements LocationListener {
         if(location != null){
             latitude = location.getLatitude();
         }
-         
         // return latitude
         return latitude;
     }

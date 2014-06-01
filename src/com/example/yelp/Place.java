@@ -5,7 +5,7 @@ import java.util.Comparator;
 
 public class Place {
     public String m_name;
-    private String m_address;
+    public String m_address;
     private String m_category;
     private String m_sortableCat;
     private String m_imageURL;

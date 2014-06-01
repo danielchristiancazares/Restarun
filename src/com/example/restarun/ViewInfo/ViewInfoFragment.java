@@ -20,12 +20,13 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class ViewInfoFragment extends Fragment {
 
-    private String m_name;
+    public String m_name;
     public String m_address;
-    private String m_number;
+    public String m_number;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,8 +53,9 @@ public class ViewInfoFragment extends Fragment {
 
     public void setMap() {
 
-        GoogleMap googleMap = ( (SupportMapFragment) getFragmentManager()
+        GoogleMap googleMap = ((SupportMapFragment) getFragmentManager()
                 .findFragmentById( R.id.map )).getMap();
+        googleMap.getUiSettings().setAllGesturesEnabled(false);
         Geocoder coder = new Geocoder( this.getActivity() );
         Address location = null;
 
@@ -82,9 +84,19 @@ public class ViewInfoFragment extends Fragment {
 
             googleMap.moveCamera( CameraUpdateFactory
                     .newCameraPosition( cameraPosition ) );
+            
+            googleMap.clear();
+            
+            googleMap.addMarker(
+                    new MarkerOptions().position(
+                            new LatLng( location.getLatitude(), location
+                                    .getLongitude() ) ).title( m_name ) )
+                    .showInfoWindow();
+            
         }
     }
-    
+
+
     
     @Override
     public void onDestroyView() {

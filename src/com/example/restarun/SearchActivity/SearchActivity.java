@@ -20,11 +20,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -40,14 +42,11 @@ import com.example.yelp.YelpAPI;
 public class SearchActivity extends ActionBarActivity {
     private static ArrayList<Place> mPlaces;
 
-    private static MyAdapter mAdapter;
     private static ViewPager mPager;
 
     private static ViewInfoFragment newFragment = new ViewInfoFragment();
 
-    /*
-     * Button onClick() functions
-     */
+    /* Button onClick() functions */
     public void ratingSort(View view) {
         if ( mPlaces.isEmpty() )
             return;
@@ -65,34 +64,41 @@ public class SearchActivity extends ActionBarActivity {
     }
 
     public void getInfo(View view) {
-        // Create new fragment and transaction
-
+        /* Find the current restaurant selected */
         int getPos = mPager.getCurrentItem();
         Place curPlace = mPlaces.get( getPos );
-        // Supply num input as an argument.
-        Bundle args = new Bundle();
 
-        args.putString( "name", curPlace.getName() );
-        args.putString( "address", curPlace.getAddress() );
-        args.putString( "number", curPlace.getNumber() );
-        args.putDouble( "rating", curPlace.getRating() );
-        args.putDouble( "distance", curPlace.getDistance() );
+        /* Set the information for the information fragment */
+        TextView infoName = (TextView) findViewById( R.id.info_name );
+        infoName.setText( curPlace.getName() );
+
+        TextView infoAddr = (TextView) findViewById( R.id.info_addr );
+        infoAddr.setText( curPlace.getAddress() );
 
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
         transaction.show( newFragment );
+        newFragment.m_name = curPlace.getName();
         newFragment.m_address = curPlace.getAddress();
         newFragment.setMap();
         transaction.commit();
-
+        
+        android.app.ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    public void endTask(View view) {
+    @Override
+    public boolean onSupportNavigateUp()
+    {
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
         transaction.hide( newFragment );
         transaction.commit();
+        android.app.ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        return true;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +109,7 @@ public class SearchActivity extends ActionBarActivity {
                 .beginTransaction();
 
         transaction.add( R.id.container, newFragment );
-        transaction.addToBackStack( null );
+        //transaction.addToBackStack( null );
         transaction.hide( newFragment );
         transaction.commit();
 
@@ -112,11 +118,14 @@ public class SearchActivity extends ActionBarActivity {
         try {
             mPlaces = new YelpAPI().execute( m_location.getLatitude(),
                     m_location.getLongitude() ).get();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            // TODO Auto-generated catch block
+        } catch (NullPointerException e) {
+            try {
+                mPlaces = new YelpAPI().execute( 32.8762142, -117.2354577 )
+                        .get();
+            } catch (InterruptedException | ExecutionException e1) {
+                e1.printStackTrace();
+            }
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
@@ -131,6 +140,18 @@ public class SearchActivity extends ActionBarActivity {
         return super.onCreateOptionsMenu( menu );
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.profile:
+                Log.d("DEBUG","Clicked");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
     public static class MyAdapter extends FragmentStatePagerAdapter {
         ArrayList<Fragment> mFragments;
 
@@ -138,7 +159,6 @@ public class SearchActivity extends ActionBarActivity {
             super( pFm );
             mFragments = new ArrayList<Fragment>();
             for ( int i = 0; mFragments.size() != mPlaces.size(); ++i ) {
-                Log.d("DEBUG",mPlaces.get(i).m_name);
                 mFragments.add( i, QuickSearchFragment.newInstance( i ) );
             }
         }
@@ -150,7 +170,6 @@ public class SearchActivity extends ActionBarActivity {
 
         @Override
         public Fragment getItem(int position) {
-
             return mFragments.get( position );
         }
 
@@ -186,7 +205,7 @@ public class SearchActivity extends ActionBarActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate( savedInstanceState );
 
-            // Store received Bundle arguments
+            /* Store received Bundle arguments */
             mName = getArguments().getString( "name" );
             mAddress = getArguments().getString( "address" );
             mImageURL = getArguments().getString( "imageurl" );
@@ -223,7 +242,6 @@ public class SearchActivity extends ActionBarActivity {
             rating.setRating( (float) mRating );
 
             DecimalFormat fmtDistance = new DecimalFormat( "##.##" );
-
             distance.setText( fmtDistance.format( mDistance ) + " miles away" );
 
             try {
