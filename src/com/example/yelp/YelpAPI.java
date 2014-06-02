@@ -70,21 +70,20 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 String Address = m_AddressString.toString();
                 String Number = m_business.get( "display_phone" ).toString();
                 // Store the deals
-                Deal m_newDeal = null;
+                String[] Deal = new String[4];
+
                 try {
                     JSONArray m_deals = m_business.getJSONArray( "deals" );
                     if ( m_deals != null ) {
                         for ( int k = 0; k < m_deals.length(); ++k ) {
-                            String deal_id = m_deals.getJSONObject( k )
-                                    .get( "id" ).toString();
-                            String deal_title = m_deals.getJSONObject( k )
+                            Deal[0] = m_deals.getJSONObject( k ).get( "id" )
+                                    .toString();
+                            Deal[1] = m_deals.getJSONObject( k )
                                     .get( "title" ).toString();
-                            String deal_url = m_deals.getJSONObject( k )
-                                    .get( "url" ).toString();
-                            String deal_start = m_deals.getJSONObject( k )
+                            Deal[2] = m_deals.getJSONObject( k ).get( "url" )
+                                    .toString();
+                            Deal[3] = m_deals.getJSONObject( k )
                                     .get( "time_start" ).toString();
-                            m_newDeal = new Deal( deal_id, deal_title,
-                                    deal_url, deal_start );
                         }
                     }
                 } catch (JSONException e) {
@@ -95,10 +94,7 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 double Distance = Double.parseDouble( m_business.get(
                         "distance" ).toString() ) / 1609.34;
                 Place newPlace = new Place( Name, Rating, Address, Distance,
-                        Category, SortableCategory, ImageURL, Number );
-                if ( m_newDeal != null ) {
-                    newPlace.setDeal( m_newDeal );
-                }
+                        Category, SortableCategory, ImageURL, Number, Deal);
                 foundPlaces.add( newPlace );
             }
         } catch (JSONException e) {

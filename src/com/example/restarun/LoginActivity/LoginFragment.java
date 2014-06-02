@@ -39,6 +39,7 @@ public class LoginFragment extends Fragment {
     private static LoginButton authButton;
     private static Button guestButton;
     private static ImageView foodImageView;
+    public String m_fbPhoto = null;
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
 
@@ -54,6 +55,7 @@ public class LoginFragment extends Fragment {
                                 Response response) {
                             if ( session == Session.getActiveSession() ) {
                                 if ( user != null ) {
+                                    m_fbPhoto = "https://graph.facebook.com/" + user.getId() + "/picture";
                                     Toast.makeText(getView().getContext(), "Welcome, " + user.getName() + "!", 
                                             Toast.LENGTH_LONG).show();
                                 }
@@ -136,7 +138,9 @@ public class LoginFragment extends Fragment {
         if ( state.isOpened() ) {
             Intent intent = new Intent( this.getActivity(),
                     SearchActivity.class );
-
+            Bundle args = new Bundle();
+            args.putString("FB_photo", m_fbPhoto);
+            intent.putExtras(args);
             startActivity( intent );
             getActivity().finish();
         } else {

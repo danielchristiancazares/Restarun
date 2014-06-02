@@ -7,6 +7,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import android.graphics.Bitmap;
@@ -20,7 +21,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -82,43 +82,46 @@ public class SearchActivity extends ActionBarActivity {
         newFragment.m_address = curPlace.getAddress();
         newFragment.setMap();
         transaction.commit();
-        
+
         android.app.ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled( true );
     }
 
     @Override
-    public boolean onSupportNavigateUp()
-    {
+    public boolean onSupportNavigateUp() {
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
         transaction.hide( newFragment );
         transaction.commit();
         android.app.ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled( false );
         return true;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_search );
 
+        Bundle b = getIntent().getExtras();
+        String fbPhotoAddr = b.getString("FB_photo");
+        
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
-
+        /* Preload the fragment containing the restaurant information layout */
         transaction.add( R.id.container, newFragment );
-        //transaction.addToBackStack( null );
         transaction.hide( newFragment );
         transaction.commit();
 
+        /* Find the user's current location */
         Location m_location = new ServiceGPS( this ).getLocation();
 
+        /* Try to pass the user's latitude and longitude */
         try {
             mPlaces = new YelpAPI().execute( m_location.getLatitude(),
                     m_location.getLongitude() ).get();
         } catch (NullPointerException e) {
+            /* Default to pre-set coordinates in order */
             try {
                 mPlaces = new YelpAPI().execute( 32.8762142, -117.2354577 )
                         .get();
@@ -128,9 +131,15 @@ public class SearchActivity extends ActionBarActivity {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        /* Select a random item in the list and place it in the first position */
+        Random rand = new Random();
+        int pos = rand.nextInt( mPlaces.size() );
+        Collections.swap( mPlaces, 0, pos );
 
+        /* Load the scrollable list */
         mPager = (ViewPager) findViewById( R.id.pager );
         mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
+        mPager.setOffscreenPageLimit( mPlaces.size() );
     }
 
     @Override
@@ -144,19 +153,20 @@ public class SearchActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            case R.id.profile:
-                Log.d("DEBUG","Clicked");
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        case R.id.profile:
+            Log.d( "DEBUG", "Clicked" );
+            return true;
+        default:
+            return super.onOptionsItemSelected( item );
         }
     }
-    
+
     public static class MyAdapter extends FragmentStatePagerAdapter {
         ArrayList<Fragment> mFragments;
 
         public MyAdapter(android.support.v4.app.FragmentManager pFm) {
             super( pFm );
+
             mFragments = new ArrayList<Fragment>();
             for ( int i = 0; mFragments.size() != mPlaces.size(); ++i ) {
                 mFragments.add( i, QuickSearchFragment.newInstance( i ) );

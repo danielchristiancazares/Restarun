@@ -6,19 +6,24 @@ import java.util.Comparator;
 public class Place {
     public String m_name;
     public String m_address;
-    private String m_category;
-    private String m_sortableCat;
-    private String m_imageURL;
-    private String m_number;
+    public String m_category;
+    public String m_sortableCat;
+    public String m_imageURL;
+    public String m_number;
+    /*
+     * m_deal[0] is deal_id
+     * m_deal[1] is deal_title
+     * m_deal[2] is deal_url
+     * m_deal[3] is deal_time_start
+     */
+    public String[] m_deal = new String[4];
     
-    private double m_rating;
-    private double m_distance;
-    
-    private ArrayList<Deal> m_deals = new ArrayList<Deal>();
+    public double m_rating;
+    public double m_distance;
 
 
     public Place(String pName, double pRating, String pAddress,
-            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber) {
+            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber, String[] pDeal) {
         m_address = pAddress;
         m_rating = pRating;
         m_name = pName;
@@ -26,11 +31,8 @@ public class Place {
         m_category = pCat;
         m_sortableCat = pSortCat;
         m_number = pNumber;
+        m_deal = pDeal;
         setImageURL( pImageURL );
-    }
-
-    public void setDeal(Deal pDeal) {
-        m_deals.add( pDeal );
     }
 
     // Accessors
