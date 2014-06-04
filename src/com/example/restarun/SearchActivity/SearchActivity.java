@@ -7,6 +7,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -15,6 +16,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,15 +43,20 @@ import com.example.restarun.User.User;
 import com.example.restarun.gpsTracker.ServiceGPS;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class SearchActivity extends ActionBarActivity {
     private static ArrayList<Place> mPlaces;
-
     private static ViewPager mPager;
 
     private static ViewInfoFragment viewInfoFragment = new ViewInfoFragment();
     private static ProfileInfoFragment profileInfoFragment = new ProfileInfoFragment();
 
+    private GoogleMap mGoogleMap;
     private User mUser = new User();
 
     /* Button onClick() functions */
@@ -81,20 +89,19 @@ public class SearchActivity extends ActionBarActivity {
         int currentPos = mPager.getCurrentItem();
         Place currentPlace = mPlaces.get( currentPos );
 
-        /* Set the information for the information fragment */
+        /* Set the information for the resetaurant information fragment */
         TextView infoName = (TextView) findViewById( R.id.info_name );
         infoName.setText( currentPlace.getName() );
 
         TextView infoAddr = (TextView) findViewById( R.id.info_addr );
         infoAddr.setText( currentPlace.getAddress() );
 
+        /* Display the information fragment */
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
         transaction.show( viewInfoFragment );
-        viewInfoFragment.m_name = currentPlace.getName();
-        viewInfoFragment.m_address = currentPlace.getAddress();
-        viewInfoFragment.setMap();
         transaction.commit();
+        setMap( currentPlace.getName(), currentPlace.getAddress() );
 
         android.app.ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled( true );
@@ -107,9 +114,6 @@ public class SearchActivity extends ActionBarActivity {
 
         if ( !mUser.beenPlaces.contains( currentPlace ) ) {
             mUser.beenPlaces.add( currentPlace );
-            Log.d( "DEBUG", "Added to history: " + currentPlace.m_name );
-        } else {
-            Log.d( "DEBUG", "Already saved: " + currentPlace.m_name );
         }
     }
 
@@ -120,27 +124,64 @@ public class SearchActivity extends ActionBarActivity {
 
         if ( !mUser.favoritedPlaces.contains( currentPlace ) ) {
             mUser.favoritedPlaces.add( currentPlace );
-            Log.d( "DEBUG", "Added to favorites: " + currentPlace.m_name );
-        } else {
-            Log.d( "DEBUG", "Already favorited: " + currentPlace.m_name );
         }
     }
-    
-    public void doLogout(View view) {
-        /* Preload all layout fragments */
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction();
-        transaction.remove( viewInfoFragment );
-        transaction.remove( profileInfoFragment );
-        Log.d( "DEBUG", "Doin' the dirty..." );
-        transaction.commit();
 
+    public void setMap(String m_name, String m_address) {
+
+        Geocoder coder = new Geocoder( this );
+        Address location = null;
+
+        try {
+
+            List<Address> addressList;
+            addressList = coder.getFromLocationName( m_address, 5 );
+            if ( addressList != null ) {
+
+                location = addressList.get( 0 );
+
+            }
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+        if ( location != null ) {
+            LatLng Restaurant = new LatLng( location.getLatitude(),
+                    location.getLongitude() );
+            mGoogleMap = ((MapFragment) getFragmentManager()
+                    .findFragmentById( R.id.map )).getMap();
+            if ( mGoogleMap != null ) {
+                mGoogleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(
+                        Restaurant, 15 ) );
+
+                mGoogleMap.clear();
+
+                mGoogleMap.addMarker(
+                        new MarkerOptions().position(
+                                new LatLng( location.getLatitude(), location
+                                        .getLongitude() ) ).title( m_name ) )
+                        .showInfoWindow();
+
+            }
+        }
+    }
+
+    public void doLogout(View view) {
+        // FragmentTransaction transaction = getSupportFragmentManager()
+        // .beginTransaction();
+        // transaction.remove( viewInfoFragment );
+        // transaction.remove( profileInfoFragment );
+        // transaction.commit();
+       
+        
         Intent intent = new Intent( this, MainActivity.class );
         Bundle args = new Bundle();
         args.putBoolean( "logout", true );
         intent.putExtras( args );
         startActivity( intent );
-        this.finish();
+        //finish();
     }
 
     @Override
@@ -149,7 +190,8 @@ public class SearchActivity extends ActionBarActivity {
                 .beginTransaction();
         transaction.hide( viewInfoFragment );
         transaction.hide( profileInfoFragment );
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
+        getSupportFragmentManager().executePendingTransactions();
         android.app.ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled( false );
         return true;
@@ -163,7 +205,6 @@ public class SearchActivity extends ActionBarActivity {
         /* Retrieve the login information from the previous activity */
         Bundle b = getIntent().getExtras();
         mUser.m_name = b.getString( "user_name" );
-        Log.d( "DEBUG", "Receiving: " + mUser.m_name );
         mUser.m_fbPhoto = b.getString( "FB_photo" );
         mUser.beenPlaces = new ArrayList<Place>();
         mUser.favoritedPlaces = new ArrayList<Place>();
@@ -219,6 +260,16 @@ public class SearchActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
+        transaction.hide( viewInfoFragment );
+        transaction.hide( profileInfoFragment );
+        transaction.commit();
+    }
+    
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         /* Handle presses on the action bar items */
         switch (item.getItemId()) {
@@ -245,7 +296,7 @@ public class SearchActivity extends ActionBarActivity {
                 savedText.append( "\n" );
 
             }
-            
+
             TextView favoritedText = (TextView) findViewById( R.id.favoritedText );
             favoritedText.setText( "Favorites: " );
             for ( int i = 0; i < mUser.favoritedPlaces.size(); ++i ) {
@@ -253,8 +304,6 @@ public class SearchActivity extends ActionBarActivity {
                 favoritedText.append( "\n" );
 
             }
-            
-            Log.d( "DEBUG", mUser.m_name );
             android.app.ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled( true );
             transaction.commit();
@@ -317,15 +366,11 @@ public class SearchActivity extends ActionBarActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate( savedInstanceState );
-            Log.d("DEBUG","onCreate()");
-
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            Log.d("DEBUG","onCreateView()");
-
             View view = inflater.inflate( R.layout.fragment_quicksearch,
                     container, false );
 

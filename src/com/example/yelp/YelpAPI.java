@@ -12,7 +12,6 @@ import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
     private static final String YELP_CONSUMER_KEY = "kQt6c0n37McCFys-eTKRHw";
@@ -50,7 +49,6 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
 
         try {
             jsonResponse = new JSONObject( request.send().getBody() );
-            Log.d( "DEBUG", jsonResponse.toString() );
             /* Store the entire array of businesses */
             unparsedBsnsArray = jsonResponse.getJSONArray( "businesses" );
 
@@ -62,10 +60,6 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
 
                 /* Store whether or not the business is currently open */
                 Boolean is_closed = current.getBoolean( "is_closed" );
-                if ( is_closed == false )
-                    Log.d( "DEBUG", "false" );
-                else
-                    Log.d( "DEBUG", "true" );
 
                 /* Store display category and internal category */
                 categories = current.getJSONArray( "categories" );

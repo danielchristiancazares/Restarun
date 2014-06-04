@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fraginfo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
@@ -28,12 +29,11 @@
             android:layout_gravity="center_horizontal"
             android:text="Address" />
 
-        <FrameLayout
+        <fragment
             android:id="@+id/map"
-            android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </FrameLayout>
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.MapFragment" />
     </LinearLayout>
 
     <LinearLayout
@@ -57,8 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-                        android:onClick="addFavorite"
             android:layout_toRightOf="@+id/linearLayout1"
+            android:onClick="addFavorite"
             android:text="Add to Favorites" />
     </LinearLayout>
 
