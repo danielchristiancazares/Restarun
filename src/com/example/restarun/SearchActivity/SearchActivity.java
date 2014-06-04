@@ -396,7 +396,7 @@ public class SearchActivity extends ActionBarActivity {
             closed.setTypeface( font2 );
 
             name.setText( mName );
-            if ( mIsClosed == false )
+            if ( mIsClosed == true )
                 closed.setText( "Currently closed!" );
             else
                 closed.setText( "Currently open!" );
