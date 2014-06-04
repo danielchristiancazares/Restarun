@@ -12,6 +12,7 @@ import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
     private static final String YELP_CONSUMER_KEY = "kQt6c0n37McCFys-eTKRHw";
@@ -21,9 +22,10 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
 
     @Override
     protected ArrayList<Place> doInBackground(Double... loc) {
+
+        /* Instantiate a new request */
         OAuthRequest request = new OAuthRequest( Verb.GET,
                 "http://api.yelp.com/v2/search" );
-
         request.addQuerystringParameter( "term", "restaurant" );
         request.addQuerystringParameter( "ll", loc[0] + "," + loc[1] );
 
@@ -35,51 +37,68 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 request );
 
         ArrayList<Place> foundPlaces = new ArrayList<Place>();
+
+        /* Variables stored from the JSON response */
+        JSONObject jsonResponse;
+        JSONArray unparsedBsnsArray;
+
+        JSONObject current;
+        JSONObject location;
+        JSONArray categories;
+        JSONArray displayAddress;
+
         try {
-            JSONObject m_JSONResponse = new JSONObject( request.send()
-                    .getBody() );
+            jsonResponse = new JSONObject( request.send().getBody() );
 
-            // Store the entire array of businesses
-            JSONArray businesses = m_JSONResponse.getJSONArray( "businesses" );
+            /* Store the entire array of businesses */
+            unparsedBsnsArray = jsonResponse.getJSONArray( "businesses" );
 
-            for ( int i = 0; i < businesses.length(); ++i ) {
-                // Store the current business object
-                JSONObject m_business = businesses.getJSONObject( i );
-                // Store the location
-                JSONObject m_location = m_business.getJSONObject( "location" );
-                // Store the category
-                JSONArray m_CatArray = m_business.getJSONArray( "categories" );
-                // Store the address
-                JSONArray m_displayAddress = m_location
+            /* Loop through all the unparsed businesses and store the list */
+            for ( int i = 0; i < unparsedBsnsArray.length(); ++i ) {
+                
+                /* Store current business object */
+                current = unparsedBsnsArray.getJSONObject( i );
+
+
+                /* Store display category and internal category */
+                categories = current.getJSONArray( "categories" );
+                
+                /* Store the address */
+                displayAddress = current.getJSONObject( "location" )
                         .getJSONArray( "display_address" );
 
-                StringBuilder m_AddressString = new StringBuilder();
+                String Address = "";
                 int j;
-                for ( j = 0; j < m_displayAddress.length() - 1; ++j ) {
-                    m_AddressString.append( m_displayAddress.get( j )
+                for ( j = 0; j < displayAddress.length() - 1; ++j ) {
+                    Address += ( displayAddress.get( j )
                             .toString() + "\n" );
                 }
-                m_AddressString.append( m_displayAddress.get( j ).toString() );
+                Address += ( displayAddress.get( j ).toString() );
 
-                JSONArray m_categories = m_CatArray.getJSONArray( 0 );
+                JSONArray m_categories = categories.getJSONArray( 0 );
+                
+                String Name = current.get( "name" ).toString();
+                String ImageURL = current.get( "image_url" ).toString();
                 String Category = m_categories.get( 0 ).toString();
                 String SortableCategory = m_categories.get( 1 ).toString();
+                String Number = null;
+                try {
+                    Number = current.get( "display_phone" )
+                            .toString();
+                } catch (JSONException e) {
 
-                String Name = m_business.get( "name" ).toString();
-                String ImageURL = m_business.get( "image_url" ).toString();
-                String Address = m_AddressString.toString();
-                String Number = m_business.get( "display_phone" ).toString();
+                }
                 // Store the deals
                 String[] Deal = new String[4];
 
                 try {
-                    JSONArray m_deals = m_business.getJSONArray( "deals" );
+                    JSONArray m_deals = current.getJSONArray( "deals" );
                     if ( m_deals != null ) {
                         for ( int k = 0; k < m_deals.length(); ++k ) {
                             Deal[0] = m_deals.getJSONObject( k ).get( "id" )
                                     .toString();
-                            Deal[1] = m_deals.getJSONObject( k )
-                                    .get( "title" ).toString();
+                            Deal[1] = m_deals.getJSONObject( k ).get( "title" )
+                                    .toString();
                             Deal[2] = m_deals.getJSONObject( k ).get( "url" )
                                     .toString();
                             Deal[3] = m_deals.getJSONObject( k )
@@ -89,12 +108,12 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 } catch (JSONException e) {
                 }
 
-                double Rating = Float.parseFloat( m_business.get( "rating" )
+                double Rating = Float.parseFloat( current.get( "rating" )
                         .toString() );
-                double Distance = Double.parseDouble( m_business.get(
+                double Distance = Double.parseDouble( current.get(
                         "distance" ).toString() ) / 1609.34;
                 Place newPlace = new Place( Name, Rating, Address, Distance,
-                        Category, SortableCategory, ImageURL, Number, Deal);
+                        Category, SortableCategory, ImageURL, Number, Deal );
                 foundPlaces.add( newPlace );
             }
         } catch (JSONException e) {
@@ -102,5 +121,4 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
         }
         return foundPlaces;
     }
-
 }

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -34,7 +35,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.restarun.R;
-import com.example.restarun.ViewInfo.ViewInfoFragment;
+import com.example.restarun.LoginActivity.MainActivity;
+import com.example.restarun.User.User;
 import com.example.restarun.gpsTracker.ServiceGPS;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
@@ -44,7 +46,10 @@ public class SearchActivity extends ActionBarActivity {
 
     private static ViewPager mPager;
 
-    private static ViewInfoFragment newFragment = new ViewInfoFragment();
+    private static ViewInfoFragment viewInfoFragment = new ViewInfoFragment();
+    private static ProfileInfoFragment profileInfoFragment = new ProfileInfoFragment();
+
+    private User mUser = new User();
 
     /* Button onClick() functions */
     public void ratingSort(View view) {
@@ -65,33 +70,64 @@ public class SearchActivity extends ActionBarActivity {
 
     public void getInfo(View view) {
         /* Find the current restaurant selected */
-        int getPos = mPager.getCurrentItem();
-        Place curPlace = mPlaces.get( getPos );
+        int currentPos = mPager.getCurrentItem();
+        Place currentPlace = mPlaces.get( currentPos );
 
         /* Set the information for the information fragment */
         TextView infoName = (TextView) findViewById( R.id.info_name );
-        infoName.setText( curPlace.getName() );
+        infoName.setText( currentPlace.getName() );
 
         TextView infoAddr = (TextView) findViewById( R.id.info_addr );
-        infoAddr.setText( curPlace.getAddress() );
+        infoAddr.setText( currentPlace.getAddress() );
 
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
-        transaction.show( newFragment );
-        newFragment.m_name = curPlace.getName();
-        newFragment.m_address = curPlace.getAddress();
-        newFragment.setMap();
+        transaction.show( viewInfoFragment );
+        viewInfoFragment.m_name = currentPlace.getName();
+        viewInfoFragment.m_address = currentPlace.getAddress();
+        viewInfoFragment.setMap();
         transaction.commit();
 
         android.app.ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled( true );
     }
 
+    public void eatHere(View view) {
+        /* Find the current restaurant selected */
+        int currentPos = mPager.getCurrentItem();
+        Place currentPlace = mPlaces.get( currentPos );
+
+        if ( !mUser.beenPlaces.contains( currentPlace ) ) {
+            mUser.beenPlaces.add( currentPlace );
+            Log.d( "DEBUG", "Added to history: " + currentPlace.m_name );
+        } else {
+            Log.d( "DEBUG", "Already saved: " + currentPlace.m_name );
+        }
+    }
+
+    public void doLogout(View view) {
+        /* Preload all layout fragments */
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
+        transaction.remove( viewInfoFragment );
+        transaction.remove( profileInfoFragment );
+        Log.d( "DEBUG", "Doin' the dirty..." );
+        transaction.commit();
+
+        Intent intent = new Intent( this, MainActivity.class );
+        Bundle args = new Bundle();
+        args.putBoolean( "logout", true );
+        intent.putExtras( args );
+        startActivity( intent );
+        this.finish();
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
-        transaction.hide( newFragment );
+        transaction.hide( viewInfoFragment );
+        transaction.hide( profileInfoFragment );
         transaction.commit();
         android.app.ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled( false );
@@ -103,26 +139,37 @@ public class SearchActivity extends ActionBarActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_search );
 
+        /* Retrieve the login information from the previous activity */
         Bundle b = getIntent().getExtras();
-        String fbPhotoAddr = b.getString("FB_photo");
-        
+        mUser.m_name = b.getString( "user_name" );
+        Log.d( "DEBUG", "Receiving: " + mUser.m_name );
+        mUser.m_fbPhoto = b.getString( "FB_photo" );
+        mUser.beenPlaces = new ArrayList<Place>();
+        mUser.savedDeals = new ArrayList<Place>();
+        mUser.favoritedPlaces = new ArrayList<Place>();
+
+        /* Preload all layout fragments */
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
-        /* Preload the fragment containing the restaurant information layout */
-        transaction.add( R.id.container, newFragment );
-        transaction.hide( newFragment );
+
+        transaction.add( R.id.container, viewInfoFragment );
+        transaction.add( R.id.container, profileInfoFragment );
+        transaction.hide( viewInfoFragment );
+        transaction.hide( profileInfoFragment );
         transaction.commit();
 
         /* Find the user's current location */
         Location m_location = new ServiceGPS( this ).getLocation();
 
-        /* Try to pass the user's latitude and longitude */
+        /* Attempt to pass phone's GPS latitude and longitude */
         try {
             mPlaces = new YelpAPI().execute( m_location.getLatitude(),
                     m_location.getLongitude() ).get();
         } catch (NullPointerException e) {
-            /* Default to pre-set coordinates in order */
+            /* Default to pre-set coordinates in case GPS fails */
             try {
+                Log.w( "Restarun",
+                        "GPS coordinates not found!\nFalling back to predefined coordinates" );
                 mPlaces = new YelpAPI().execute( 32.8762142, -117.2354577 )
                         .get();
             } catch (InterruptedException | ExecutionException e1) {
@@ -131,12 +178,13 @@ public class SearchActivity extends ActionBarActivity {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        /* Select a random item in the list and place it in the first position */
+
+        /* Select a random restaurant in the list and move it to first position */
         Random rand = new Random();
         int pos = rand.nextInt( mPlaces.size() );
         Collections.swap( mPlaces, 0, pos );
 
-        /* Load the scrollable list */
+        /* Load the list view */
         mPager = (ViewPager) findViewById( R.id.pager );
         mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
         mPager.setOffscreenPageLimit( mPlaces.size() );
@@ -144,6 +192,7 @@ public class SearchActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        /* Add the action bar items to the view */
         MenuInflater inflater = getMenuInflater();
         inflater.inflate( R.menu.main, menu );
         return super.onCreateOptionsMenu( menu );
@@ -151,16 +200,43 @@ public class SearchActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
+        /* Handle presses on the action bar items */
         switch (item.getItemId()) {
         case R.id.profile:
-            Log.d( "DEBUG", "Clicked" );
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction();
+            transaction.show( profileInfoFragment );
+
+            /* Set user profile information */
+            TextView usernameText = (TextView) findViewById( R.id.welcomeText );
+            usernameText.setText( "Hi, " + mUser.m_name );
+            TextView been = (TextView) findViewById( R.id.been );
+            been.setText( "been to " + mUser.beenPlaces.size() + " place(s)" );
+            TextView saved = (TextView) findViewById( R.id.saved );
+            saved.setText( "saved " + mUser.savedDeals.size() + " deal(s)" );
+            TextView favorited = (TextView) findViewById( R.id.favorited );
+            favorited.setText( "favorited " + mUser.favoritedPlaces.size()
+                    + " place(s)" );
+
+            TextView savedText = (TextView) findViewById( R.id.savedText );
+            savedText.setText( "History: ");
+            for( int i = 0; i < mUser.beenPlaces.size(); ++i )
+            {
+                savedText.append( mUser.beenPlaces.get(i).getName() );
+                savedText.append( "\n" );
+
+            }
+            Log.d( "DEBUG", mUser.m_name );
+            android.app.ActionBar actionBar = getActionBar();
+            actionBar.setDisplayHomeAsUpEnabled( true );
+            transaction.commit();
             return true;
         default:
             return super.onOptionsItemSelected( item );
         }
     }
 
+    /* Swipe-able list implementation */
     public static class MyAdapter extends FragmentStatePagerAdapter {
         ArrayList<Fragment> mFragments;
 
@@ -198,15 +274,12 @@ public class SearchActivity extends ActionBarActivity {
             QuickSearchFragment frag = new QuickSearchFragment();
 
             Place p = mPlaces.get( num );
-            // Supply num input as an argument.
-            Bundle args = new Bundle();
-            args.putString( "name", p.getName() );
-            args.putString( "address", p.getAddress() );
-            args.putString( "imageurl", p.getImageURL() );
-            args.putString( "number", p.getNumber() );
-            args.putDouble( "rating", p.getRating() );
-            args.putDouble( "distance", p.getDistance() );
-            frag.setArguments( args );
+            frag.mName = p.m_name;
+            frag.mImageURL = p.m_imageURL;
+            frag.mAddress = p.m_address;
+            frag.mNumber = p.m_number;
+            frag.mRating = p.m_rating;
+            frag.mDistance = p.m_distance;
 
             return frag;
         }
@@ -215,13 +288,6 @@ public class SearchActivity extends ActionBarActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate( savedInstanceState );
 
-            /* Store received Bundle arguments */
-            mName = getArguments().getString( "name" );
-            mAddress = getArguments().getString( "address" );
-            mImageURL = getArguments().getString( "imageurl" );
-            mNumber = getArguments().getString( "number" );
-            mRating = getArguments().getDouble( "rating" );
-            mDistance = getArguments().getDouble( "distance" );
         }
 
         @Override

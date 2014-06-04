@@ -35,7 +35,7 @@
         android:gravity="center"
         android:text="Name"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="50sp" />
+        android:textSize="35sp" />
 
     <TextView
         android:id="@+id/distance"

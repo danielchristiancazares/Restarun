@@ -1,4 +1,4 @@
-package com.example.restarun.ViewInfo;
+package com.example.restarun.SearchActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,6 @@ import android.view.ViewGroup;
 import com.example.restarun.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -28,6 +28,10 @@ public class ViewInfoFragment extends Fragment {
     public String m_address;
     public String m_number;
 
+    public SupportMapFragment mSupportMapFragment = null;
+    public FragmentManager mFragmentManager;
+    public FragmentTransaction mFragmentTransaction;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -37,16 +41,15 @@ public class ViewInfoFragment extends Fragment {
     }
 
     private void initilizeMap() {
-        SupportMapFragment mSupportMapFragment = (SupportMapFragment) getFragmentManager()
+        mSupportMapFragment = (SupportMapFragment) getFragmentManager()
                 .findFragmentById( R.id.map );
 
         if ( mSupportMapFragment == null ) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager
-                    .beginTransaction();
+            mFragmentManager = getFragmentManager();
+            mFragmentTransaction = mFragmentManager.beginTransaction();
             mSupportMapFragment = SupportMapFragment.newInstance();
-            fragmentTransaction.replace( R.id.map, mSupportMapFragment );
-            fragmentTransaction.commit();
+            mFragmentTransaction.add( R.id.map, mSupportMapFragment );
+            mFragmentTransaction.commit();
         }
 
     }
@@ -55,7 +58,7 @@ public class ViewInfoFragment extends Fragment {
 
         GoogleMap googleMap = ((SupportMapFragment) getFragmentManager()
                 .findFragmentById( R.id.map )).getMap();
-        googleMap.getUiSettings().setAllGesturesEnabled(false);
+        googleMap.getUiSettings().setAllGesturesEnabled( false );
         Geocoder coder = new Geocoder( this.getActivity() );
         Address location = null;
 
@@ -66,8 +69,6 @@ public class ViewInfoFragment extends Fragment {
             if ( addressList != null ) {
 
                 location = addressList.get( 0 );
-                location.getLatitude();
-                location.getLongitude();
 
             }
 
@@ -84,20 +85,18 @@ public class ViewInfoFragment extends Fragment {
 
             googleMap.moveCamera( CameraUpdateFactory
                     .newCameraPosition( cameraPosition ) );
-            
+
             googleMap.clear();
-            
+
             googleMap.addMarker(
                     new MarkerOptions().position(
                             new LatLng( location.getLatitude(), location
                                     .getLongitude() ) ).title( m_name ) )
                     .showInfoWindow();
-            
+
         }
     }
 
-
-    
     @Override
     public void onDestroyView() {
         super.onDestroyView();
