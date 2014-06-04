@@ -44,25 +44,32 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
 
         JSONObject current;
         JSONObject location;
+        JSONObject open;
         JSONArray categories;
         JSONArray displayAddress;
 
         try {
             jsonResponse = new JSONObject( request.send().getBody() );
-
+            Log.d( "DEBUG", jsonResponse.toString() );
             /* Store the entire array of businesses */
             unparsedBsnsArray = jsonResponse.getJSONArray( "businesses" );
 
             /* Loop through all the unparsed businesses and store the list */
             for ( int i = 0; i < unparsedBsnsArray.length(); ++i ) {
-                
+
                 /* Store current business object */
                 current = unparsedBsnsArray.getJSONObject( i );
 
+                /* Store whether or not the business is currently open */
+                Boolean is_closed = current.getBoolean( "is_closed" );
+                if ( is_closed == false )
+                    Log.d( "DEBUG", "false" );
+                else
+                    Log.d( "DEBUG", "true" );
 
                 /* Store display category and internal category */
                 categories = current.getJSONArray( "categories" );
-                
+
                 /* Store the address */
                 displayAddress = current.getJSONObject( "location" )
                         .getJSONArray( "display_address" );
@@ -70,53 +77,41 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 String Address = "";
                 int j;
                 for ( j = 0; j < displayAddress.length() - 1; ++j ) {
-                    Address += ( displayAddress.get( j )
-                            .toString() + "\n" );
+                    Address += (displayAddress.get( j ).toString() + "\n");
                 }
-                Address += ( displayAddress.get( j ).toString() );
+                Address += (displayAddress.get( j ).toString());
 
                 JSONArray m_categories = categories.getJSONArray( 0 );
-                
+
                 String Name = current.get( "name" ).toString();
                 String ImageURL = current.get( "image_url" ).toString();
                 String Category = m_categories.get( 0 ).toString();
                 String SortableCategory = m_categories.get( 1 ).toString();
                 String Number = null;
                 try {
-                    Number = current.get( "display_phone" )
-                            .toString();
+                    Number = current.get( "display_phone" ).toString();
                 } catch (JSONException e) {
 
                 }
                 /*
-                // Store the deals
-                String[] Deal = new String[4];
-
-                try {
-                    JSONArray m_deals = current.getJSONArray( "deals" );
-                    if ( m_deals != null ) {
-                        for ( int k = 0; k < m_deals.length(); ++k ) {
-                            Log.d("DEBUG","Deal found for " + Name );
-                            Deal[0] = m_deals.getJSONObject( k ).get( "id" )
-                                    .toString();
-                            Deal[1] = m_deals.getJSONObject( k ).get( "title" )
-                                    .toString();
-                            Deal[2] = m_deals.getJSONObject( k ).get( "url" )
-                                    .toString();
-                            Deal[3] = m_deals.getJSONObject( k )
-                                    .get( "time_start" ).toString();
-                        }
-                    }
-                } catch (JSONException e) {
-                }
-*/
+                 * // Store the deals String[] Deal = new String[4];
+                 * 
+                 * try { JSONArray m_deals = current.getJSONArray( "deals" ); if
+                 * ( m_deals != null ) { for ( int k = 0; k < m_deals.length();
+                 * ++k ) { Log.d("DEBUG","Deal found for " + Name ); Deal[0] =
+                 * m_deals.getJSONObject( k ).get( "id" ) .toString(); Deal[1] =
+                 * m_deals.getJSONObject( k ).get( "title" ) .toString();
+                 * Deal[2] = m_deals.getJSONObject( k ).get( "url" )
+                 * .toString(); Deal[3] = m_deals.getJSONObject( k ) .get(
+                 * "time_start" ).toString(); } } } catch (JSONException e) { }
+                 */
                 double Rating = Float.parseFloat( current.get( "rating" )
                         .toString() );
-                double Distance = Double.parseDouble( current.get(
-                        "distance" ).toString() ) / 1609.34;
+                double Distance = Double.parseDouble( current.get( "distance" )
+                        .toString() ) / 1609.34;
                 Place newPlace = new Place( Name, Rating, Address, Distance,
-                        Category, SortableCategory, ImageURL, Number );
-                        //, Deal );
+                        Category, SortableCategory, ImageURL, Number, is_closed );
+                // , Deal );
                 foundPlaces.add( newPlace );
             }
         } catch (JSONException e) {

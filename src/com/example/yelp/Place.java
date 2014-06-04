@@ -20,10 +20,10 @@ public class Place {
     
     public double m_rating;
     public double m_distance;
-
+    public Boolean m_isClosed;
 
     public Place(String pName, double pRating, String pAddress,
-            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber ) {
+            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber, Boolean pIsClosed ) {
             //, String[] pDeal) {
         m_address = pAddress;
         m_rating = pRating;
@@ -32,6 +32,7 @@ public class Place {
         m_category = pCat;
         m_sortableCat = pSortCat;
         m_number = pNumber;
+        m_isClosed = pIsClosed;
        // m_deal = pDeal;
         setImageURL( pImageURL );
     }
@@ -88,7 +89,7 @@ public class Place {
         }
     };
 
-    /* Comparator for sorting the list by roll no */
+    /* Comparator for sorting the list by distance */
     public static Comparator<Place> distanceComparator = new Comparator<Place>() {
 
         public int compare(Place firstPlace, Place secondPlace) {
@@ -101,5 +102,26 @@ public class Place {
         }
     };
 
+    /* Comparator for sorting the list by whether or not it's open */
+    public static Comparator<Place> openComparator = new Comparator<Place>() {
 
+        public int compare(Place firstPlace, Place secondPlace) {
+
+            Boolean firstDist = firstPlace.m_isClosed;
+            Boolean secondDist = secondPlace.m_isClosed;
+            if( firstDist == true && secondDist == false )
+            {
+                return 1;
+            }
+            else if( firstDist == false && secondDist == true )
+            {
+                return -1;
+            } else
+            {
+                return 0;
+            }
+
+        }
+    };
+    
 }

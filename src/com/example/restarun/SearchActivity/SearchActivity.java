@@ -68,6 +68,14 @@ public class SearchActivity extends ActionBarActivity {
         mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
     }
 
+    public void openSort(View view) {
+        if ( mPlaces.isEmpty() )
+            return;
+
+        Collections.sort( mPlaces, Place.openComparator );
+        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
+    }
+
     public void getInfo(View view) {
         /* Find the current restaurant selected */
         int currentPos = mPager.getCurrentItem();
@@ -105,6 +113,19 @@ public class SearchActivity extends ActionBarActivity {
         }
     }
 
+    public void addFavorite(View view) {
+        /* Find the current restaurant selected */
+        int currentPos = mPager.getCurrentItem();
+        Place currentPlace = mPlaces.get( currentPos );
+
+        if ( !mUser.favoritedPlaces.contains( currentPlace ) ) {
+            mUser.favoritedPlaces.add( currentPlace );
+            Log.d( "DEBUG", "Added to favorites: " + currentPlace.m_name );
+        } else {
+            Log.d( "DEBUG", "Already favorited: " + currentPlace.m_name );
+        }
+    }
+    
     public void doLogout(View view) {
         /* Preload all layout fragments */
         FragmentTransaction transaction = getSupportFragmentManager()
@@ -145,7 +166,6 @@ public class SearchActivity extends ActionBarActivity {
         Log.d( "DEBUG", "Receiving: " + mUser.m_name );
         mUser.m_fbPhoto = b.getString( "FB_photo" );
         mUser.beenPlaces = new ArrayList<Place>();
-        mUser.savedDeals = new ArrayList<Place>();
         mUser.favoritedPlaces = new ArrayList<Place>();
 
         /* Preload all layout fragments */
@@ -212,20 +232,28 @@ public class SearchActivity extends ActionBarActivity {
             usernameText.setText( "Hi, " + mUser.m_name );
             TextView been = (TextView) findViewById( R.id.been );
             been.setText( "been to " + mUser.beenPlaces.size() + " place(s)" );
-            //TextView saved = (TextView) findViewById( R.id.saved );
-            //saved.setText( "saved " + mUser.savedDeals.size() + " deal(s)" );
+            // TextView saved = (TextView) findViewById( R.id.saved );
+            // saved.setText( "saved " + mUser.savedDeals.size() + " deal(s)" );
             TextView favorited = (TextView) findViewById( R.id.favorited );
             favorited.setText( "favorited " + mUser.favoritedPlaces.size()
                     + " place(s)" );
 
             TextView savedText = (TextView) findViewById( R.id.savedText );
-            savedText.setText( "History: ");
-            for( int i = 0; i < mUser.beenPlaces.size(); ++i )
-            {
-                savedText.append( mUser.beenPlaces.get(i).getName() );
+            savedText.setText( "History: " );
+            for ( int i = 0; i < mUser.beenPlaces.size(); ++i ) {
+                savedText.append( mUser.beenPlaces.get( i ).getName() );
                 savedText.append( "\n" );
 
             }
+            
+            TextView favoritedText = (TextView) findViewById( R.id.favoritedText );
+            favoritedText.setText( "Favorites: " );
+            for ( int i = 0; i < mUser.favoritedPlaces.size(); ++i ) {
+                favoritedText.append( mUser.favoritedPlaces.get( i ).getName() );
+                favoritedText.append( "\n" );
+
+            }
+            
             Log.d( "DEBUG", mUser.m_name );
             android.app.ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled( true );
@@ -269,6 +297,7 @@ public class SearchActivity extends ActionBarActivity {
         private String mNumber;
         private double mRating;
         private double mDistance;
+        private Boolean mIsClosed;
 
         static QuickSearchFragment newInstance(int num) {
             QuickSearchFragment frag = new QuickSearchFragment();
@@ -280,6 +309,7 @@ public class SearchActivity extends ActionBarActivity {
             frag.mNumber = p.m_number;
             frag.mRating = p.m_rating;
             frag.mDistance = p.m_distance;
+            frag.mIsClosed = p.m_isClosed;
 
             return frag;
         }
@@ -299,6 +329,8 @@ public class SearchActivity extends ActionBarActivity {
             ImageView image = (ImageView) view.findViewById( R.id.imageView1 );
             TextView name = (TextView) view.findViewById( R.id.name );
             TextView distance = (TextView) view.findViewById( R.id.distance );
+            TextView closed = (TextView) view.findViewById( R.id.closed );
+
             RatingBar rating = (RatingBar) view.findViewById( R.id.ratingBar );
             rating.setIsIndicator( true );
 
@@ -309,11 +341,17 @@ public class SearchActivity extends ActionBarActivity {
 
             name.setTextColor( Color.WHITE );
             distance.setTextColor( Color.WHITE );
+            closed.setTextColor( Color.WHITE );
 
             name.setTypeface( font );
             distance.setTypeface( font2 );
+            closed.setTypeface( font2 );
 
             name.setText( mName );
+            if ( mIsClosed == false )
+                closed.setText( "Currently closed!" );
+            else
+                closed.setText( "Currently open!" );
 
             rating.setRating( (float) mRating );
 

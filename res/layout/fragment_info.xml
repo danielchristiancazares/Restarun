@@ -34,7 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
         </FrameLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -51,6 +50,16 @@
             android:layout_height="wrap_content"
             android:onClick="eatHere"
             android:text="Eat Here" />
+
+        <Button
+            android:id="@+id/button1"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+                        android:onClick="addFavorite"
+            android:layout_toRightOf="@+id/linearLayout1"
+            android:text="Add to Favorites" />
     </LinearLayout>
 
 </RelativeLayout>
