@@ -16,14 +16,15 @@ public class Place {
      * m_deal[2] is deal_url
      * m_deal[3] is deal_time_start
      */
-    public String[] m_deal = new String[4];
+    //public String[] m_deal = new String[4];
     
     public double m_rating;
     public double m_distance;
 
 
     public Place(String pName, double pRating, String pAddress,
-            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber, String[] pDeal) {
+            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber ) {
+            //, String[] pDeal) {
         m_address = pAddress;
         m_rating = pRating;
         m_name = pName;
@@ -31,7 +32,7 @@ public class Place {
         m_category = pCat;
         m_sortableCat = pSortCat;
         m_number = pNumber;
-        m_deal = pDeal;
+       // m_deal = pDeal;
         setImageURL( pImageURL );
     }
 

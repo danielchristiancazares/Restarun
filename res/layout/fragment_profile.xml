@@ -36,14 +36,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/saved"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="saved $x deal(s)."
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
         android:id="@+id/favorited"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,13 +53,6 @@
 
     <TextView
         android:id="@+id/savedText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="TextView" />
-
-    <TextView
-        android:id="@+id/dealsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

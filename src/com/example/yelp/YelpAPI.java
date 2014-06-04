@@ -88,6 +88,7 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 } catch (JSONException e) {
 
                 }
+                /*
                 // Store the deals
                 String[] Deal = new String[4];
 
@@ -95,6 +96,7 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                     JSONArray m_deals = current.getJSONArray( "deals" );
                     if ( m_deals != null ) {
                         for ( int k = 0; k < m_deals.length(); ++k ) {
+                            Log.d("DEBUG","Deal found for " + Name );
                             Deal[0] = m_deals.getJSONObject( k ).get( "id" )
                                     .toString();
                             Deal[1] = m_deals.getJSONObject( k ).get( "title" )
@@ -107,13 +109,14 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                     }
                 } catch (JSONException e) {
                 }
-
+*/
                 double Rating = Float.parseFloat( current.get( "rating" )
                         .toString() );
                 double Distance = Double.parseDouble( current.get(
                         "distance" ).toString() ) / 1609.34;
                 Place newPlace = new Place( Name, Rating, Address, Distance,
-                        Category, SortableCategory, ImageURL, Number, Deal );
+                        Category, SortableCategory, ImageURL, Number );
+                        //, Deal );
                 foundPlaces.add( newPlace );
             }
         } catch (JSONException e) {

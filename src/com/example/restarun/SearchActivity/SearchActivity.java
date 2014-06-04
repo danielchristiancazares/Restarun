@@ -212,8 +212,8 @@ public class SearchActivity extends ActionBarActivity {
             usernameText.setText( "Hi, " + mUser.m_name );
             TextView been = (TextView) findViewById( R.id.been );
             been.setText( "been to " + mUser.beenPlaces.size() + " place(s)" );
-            TextView saved = (TextView) findViewById( R.id.saved );
-            saved.setText( "saved " + mUser.savedDeals.size() + " deal(s)" );
+            //TextView saved = (TextView) findViewById( R.id.saved );
+            //saved.setText( "saved " + mUser.savedDeals.size() + " deal(s)" );
             TextView favorited = (TextView) findViewById( R.id.favorited );
             favorited.setText( "favorited " + mUser.favoritedPlaces.size()
                     + " place(s)" );
