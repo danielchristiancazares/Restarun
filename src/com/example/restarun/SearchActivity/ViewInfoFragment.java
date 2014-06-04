@@ -29,8 +29,8 @@ public class ViewInfoFragment extends Fragment {
     public String m_number;
 
     public SupportMapFragment mSupportMapFragment = null;
-    public FragmentManager mFragmentManager;
-    public FragmentTransaction mFragmentTransaction;
+    public FragmentManager mFragmentManager = null;
+    public FragmentTransaction mFragmentTransaction = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

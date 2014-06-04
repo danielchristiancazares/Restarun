@@ -317,12 +317,15 @@ public class SearchActivity extends ActionBarActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate( savedInstanceState );
+            Log.d("DEBUG","onCreate()");
 
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+            Log.d("DEBUG","onCreateView()");
+
             View view = inflater.inflate( R.layout.fragment_quicksearch,
                     container, false );
 
