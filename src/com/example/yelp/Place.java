@@ -10,6 +10,7 @@ public class Place {
     public String m_sortableCat;
     public String m_imageURL;
     public String m_number;
+    public String m_googleAddress;
     /*
      * m_deal[0] is deal_id
      * m_deal[1] is deal_title
@@ -24,7 +25,6 @@ public class Place {
 
     public Place(String pName, double pRating, String pAddress,
             double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber, Boolean pIsClosed ) {
-            //, String[] pDeal) {
         m_address = pAddress;
         m_rating = pRating;
         m_name = pName;
@@ -33,7 +33,6 @@ public class Place {
         m_sortableCat = pSortCat;
         m_number = pNumber;
         m_isClosed = pIsClosed;
-       // m_deal = pDeal;
         setImageURL( pImageURL );
     }
 

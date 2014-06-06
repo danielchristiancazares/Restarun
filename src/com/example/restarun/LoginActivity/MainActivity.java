@@ -56,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void performLogin() {
-        Log.d("DEBUG",getDeviceId());
+        //Log.d("DEBUG",getDeviceId());
         Intent intent = new Intent( this, SearchActivity.class );
         Bundle args = new Bundle();
         Log.d( "DEBUG", "performLogin() Passing: " + m_user.m_name );
@@ -91,6 +91,7 @@ public class MainActivity extends ActionBarActivity {
     }
     // 8 digits - 4 characters - 4 characters - 4 characters - 12 characters
     // 8 + 4 + 12 + 12 = 12 + 12 + 12 = 36
+    /*
     public String getDeviceId() {
         // TelephonyManager objects provide access to different phone services
         final TelephonyManager tm = (TelephonyManager) getBaseContext()
@@ -116,7 +117,7 @@ public class MainActivity extends ActionBarActivity {
         String deviceId = deviceUuid.toString();
         return deviceId;
     }
-
+    */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );

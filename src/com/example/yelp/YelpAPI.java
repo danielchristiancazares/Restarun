@@ -46,7 +46,9 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
         JSONObject open;
         JSONArray categories;
         JSONArray displayAddress;
-
+        JSONObject googleAddress;
+        String GoogleAddress;
+        
         try {
             jsonResponse = new JSONObject( request.send().getBody() );
             /* Store the entire array of businesses */
@@ -67,7 +69,12 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 /* Store the address */
                 displayAddress = current.getJSONObject( "location" )
                         .getJSONArray( "display_address" );
-
+                
+                googleAddress = current.getJSONObject( "location" );
+                String gAdd1 = googleAddress.getJSONArray( "address" ).get(0).toString();
+                String gAdd2 = googleAddress.get( "city" ).toString();
+                
+                GoogleAddress = gAdd1 + "," + gAdd2;
                 String Address = "";
                 int j;
                 for ( j = 0; j < displayAddress.length() - 1; ++j ) {
@@ -87,25 +94,13 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 } catch (JSONException e) {
 
                 }
-                /*
-                 * // Store the deals String[] Deal = new String[4];
-                 * 
-                 * try { JSONArray m_deals = current.getJSONArray( "deals" ); if
-                 * ( m_deals != null ) { for ( int k = 0; k < m_deals.length();
-                 * ++k ) { Log.d("DEBUG","Deal found for " + Name ); Deal[0] =
-                 * m_deals.getJSONObject( k ).get( "id" ) .toString(); Deal[1] =
-                 * m_deals.getJSONObject( k ).get( "title" ) .toString();
-                 * Deal[2] = m_deals.getJSONObject( k ).get( "url" )
-                 * .toString(); Deal[3] = m_deals.getJSONObject( k ) .get(
-                 * "time_start" ).toString(); } } } catch (JSONException e) { }
-                 */
                 double Rating = Float.parseFloat( current.get( "rating" )
                         .toString() );
                 double Distance = Double.parseDouble( current.get( "distance" )
                         .toString() ) / 1609.34;
                 Place newPlace = new Place( Name, Rating, Address, Distance,
                         Category, SortableCategory, ImageURL, Number, is_closed );
-                // , Deal );
+                newPlace.m_googleAddress = GoogleAddress;
                 foundPlaces.add( newPlace );
             }
         } catch (JSONException e) {

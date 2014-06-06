@@ -60,7 +60,6 @@ public class SearchActivity extends ActionBarActivity {
     private static ViewInfoFragment viewInfoFragment = new ViewInfoFragment();
     private static ProfileInfoFragment profileInfoFragment = new ProfileInfoFragment();
 
-    private GoogleMap mGoogleMap;
     private User mUser = new User();
 
     /* Button onClick() functions */
@@ -105,7 +104,7 @@ public class SearchActivity extends ActionBarActivity {
                 .beginTransaction();
         transaction.show( viewInfoFragment );
         transaction.commit();
-        setMap( currentPlace.getName(), currentPlace.getAddress() );
+        setMap( currentPlace.getName(), currentPlace.m_googleAddress );
 
         android.app.ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled( true );
@@ -131,61 +130,27 @@ public class SearchActivity extends ActionBarActivity {
         }
     }
 
+
     public void setMap(String m_name, String m_address) {
 
-        Geocoder coder = new Geocoder( this );
-        Address location = null;
-
+        ImageView googleMap = (ImageView) findViewById(R.id.map);
+        String unparsedURL = "http://maps.googleapis.com/maps/api/staticmap?center=" + m_address + "&zoom=15&size=1000x1000&maptype=roadmap&markers=" + m_address;
+        String mapURL = unparsedURL.replaceAll(" ", "%20");
         try {
-
-            List<Address> addressList;
-            addressList = coder.getFromLocationName( m_address, 5 );
-            if ( addressList != null ) {
-
-                location = addressList.get( 0 );
-
-            }
-
-        } catch (IOException e) {
-
+            googleMap.setImageBitmap( new QuickSearchFragment.DownloadImage().execute(mapURL)
+                    .get() );
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-        }
-
-        if ( location != null ) {
-            LatLng Restaurant = new LatLng( location.getLatitude(),
-                    location.getLongitude() );
-            mGoogleMap = ((MapFragment) getFragmentManager()
-                    .findFragmentById( R.id.map )).getMap();
-            if ( mGoogleMap != null ) {
-                mGoogleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(
-                        Restaurant, 15 ) );
-
-                mGoogleMap.clear();
-
-                mGoogleMap.addMarker(
-                        new MarkerOptions().position(
-                                new LatLng( location.getLatitude(), location
-                                        .getLongitude() ) ).title( m_name ) )
-                        .showInfoWindow();
-
-            }
         }
     }
 
     public void doLogout(View view) {
-        // FragmentTransaction transaction = getSupportFragmentManager()
-        // .beginTransaction();
-        // transaction.remove( viewInfoFragment );
-        // transaction.remove( profileInfoFragment );
-        // transaction.commit();
-       
-        
         Intent intent = new Intent( this, MainActivity.class );
         Bundle args = new Bundle();
         args.putBoolean( "logout", true );
         intent.putExtras( args );
         startActivity( intent );
-        //finish();
+        finish();
     }
 
     @Override
@@ -245,9 +210,10 @@ public class SearchActivity extends ActionBarActivity {
         }
 
         /* Select a random restaurant in the list and move it to first position */
-        Random rand = new Random();
-        int pos = rand.nextInt( mPlaces.size() );
-        Collections.swap( mPlaces, 0, pos );
+        //Random rand = new Random();
+        //int pos = rand.nextInt( mPlaces.size() );
+        //int pos = 1;
+        //Collections.swap( mPlaces, 0, pos );
 
         /* Load the list view */
         mPager = (ViewPager) findViewById( R.id.pager );
@@ -287,8 +253,6 @@ public class SearchActivity extends ActionBarActivity {
             usernameText.setText( "Hi, " + mUser.m_name );
             TextView been = (TextView) findViewById( R.id.been );
             been.setText( "been to " + mUser.beenPlaces.size() + " place(s)" );
-            // TextView saved = (TextView) findViewById( R.id.saved );
-            // saved.setText( "saved " + mUser.savedDeals.size() + " deal(s)" );
             TextView favorited = (TextView) findViewById( R.id.favorited );
             favorited.setText( "favorited " + mUser.favoritedPlaces.size()
                     + " place(s)" );
@@ -348,6 +312,7 @@ public class SearchActivity extends ActionBarActivity {
         private String mImageURL;
         private String mAddress;
         private String mNumber;
+        private String mGoogleAddress;
         private double mRating;
         private double mDistance;
         private Boolean mIsClosed;
@@ -363,6 +328,7 @@ public class SearchActivity extends ActionBarActivity {
             frag.mRating = p.m_rating;
             frag.mDistance = p.m_distance;
             frag.mIsClosed = p.m_isClosed;
+            frag.mGoogleAddress = p.m_googleAddress;
 
             return frag;
         }
