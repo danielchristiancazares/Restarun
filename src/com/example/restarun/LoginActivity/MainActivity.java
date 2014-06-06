@@ -24,7 +24,7 @@ import com.facebook.model.GraphUser;
 
 public class MainActivity extends ActionBarActivity {
 
-    public User m_user;
+    public User m_user = User.getInstance();
     private boolean action = false;
     
     private static UiLifecycleHelper uihelper;
@@ -60,16 +60,16 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent( this, SearchActivity.class );
         Bundle args = new Bundle();
         Log.d( "DEBUG", "performLogin() Passing: " + m_user.m_name );
-        args.putString( "user_name", m_user.m_name );
-        args.putString( "FB_photo", m_user.m_fbPhoto );
+        args.putString( "user_name", m_user.getName() );
+        args.putString( "FB_photo", m_user.getPhoto() );
         intent.putExtras( args );
         startActivity( intent );
         finish();
     }
 
     public void guestLogin(View view) {
-        m_user.m_name = "Guest";
-        m_user.m_fbPhoto = null;
+        m_user.setName("Guest");
+        m_user.setPhoto("");
         performLogin();
     }
 
@@ -127,9 +127,7 @@ public class MainActivity extends ActionBarActivity {
                 .replace( R.id.container, new LoginFragment() ).commit();
         Typeface font = Typeface.createFromAsset( this.getAssets(),
                 "fonts/Roboto-Regular.ttf" );
-
-        m_user = new User();
-
+        
         sessionStatusCallback = new SessionStatusCallback();
         requestGraphUserCallback = new RequestGraphUserCallback();
 

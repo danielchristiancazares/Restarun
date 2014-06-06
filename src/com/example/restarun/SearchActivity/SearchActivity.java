@@ -60,32 +60,7 @@ public class SearchActivity extends ActionBarActivity {
     private static ViewInfoFragment viewInfoFragment = new ViewInfoFragment();
     private static ProfileInfoFragment profileInfoFragment = new ProfileInfoFragment();
 
-    private User mUser = new User();
-
-    /* Button onClick() functions */
-    public void ratingSort(View view) {
-        if ( mPlaces.isEmpty() )
-            return;
-
-        Collections.sort( mPlaces, Place.ratingComparator );
-        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
-    }
-
-    public void distanceSort(View view) {
-        if ( mPlaces.isEmpty() )
-            return;
-
-        Collections.sort( mPlaces, Place.distanceComparator );
-        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
-    }
-
-    public void openSort(View view) {
-        if ( mPlaces.isEmpty() )
-            return;
-
-        Collections.sort( mPlaces, Place.openComparator );
-        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
-    }
+    private User mUser = User.getInstance();
 
     public void getInfo(View view) {
         /* Find the current restaurant selected */
@@ -115,8 +90,8 @@ public class SearchActivity extends ActionBarActivity {
         int currentPos = mPager.getCurrentItem();
         Place currentPlace = mPlaces.get( currentPos );
 
-        if ( !mUser.beenPlaces.contains( currentPlace ) ) {
-            mUser.beenPlaces.add( currentPlace );
+        if ( !mUser.contains( "been", currentPlace ) ) {
+            mUser.add( "been", currentPlace );
         }
     }
 
@@ -125,8 +100,8 @@ public class SearchActivity extends ActionBarActivity {
         int currentPos = mPager.getCurrentItem();
         Place currentPlace = mPlaces.get( currentPos );
 
-        if ( !mUser.favoritedPlaces.contains( currentPlace ) ) {
-            mUser.favoritedPlaces.add( currentPlace );
+        if ( !mUser.contains("favorite", currentPlace ) ) {
+            mUser.add( "favorite", currentPlace );
         }
     }
 
@@ -173,10 +148,8 @@ public class SearchActivity extends ActionBarActivity {
 
         /* Retrieve the login information from the previous activity */
         Bundle b = getIntent().getExtras();
-        mUser.m_name = b.getString( "user_name" );
-        mUser.m_fbPhoto = b.getString( "FB_photo" );
-        mUser.beenPlaces = new ArrayList<Place>();
-        mUser.favoritedPlaces = new ArrayList<Place>();
+        mUser.setName( b.getString( "user_name" ));
+        mUser.setPhoto( b.getString( "FB_photo" ));
 
         /* Preload all layout fragments */
         FragmentTransaction transaction = getSupportFragmentManager()
@@ -250,27 +223,25 @@ public class SearchActivity extends ActionBarActivity {
 
             /* Set user profile information */
             TextView usernameText = (TextView) findViewById( R.id.welcomeText );
-            usernameText.setText( "Hi, " + mUser.m_name );
+            usernameText.setText( "Hi, " + mUser.getName() );
             TextView been = (TextView) findViewById( R.id.been );
-            been.setText( "been to " + mUser.beenPlaces.size() + " place(s)" );
+            been.setText( "been to " + mUser.getBeenPlaces().size() + " place(s)" );
             TextView favorited = (TextView) findViewById( R.id.favorited );
-            favorited.setText( "favorited " + mUser.favoritedPlaces.size()
+            favorited.setText( "favorited " + mUser.getFavoritedPlaces().size()
                     + " place(s)" );
 
             TextView savedText = (TextView) findViewById( R.id.savedText );
             savedText.setText( "History: " );
-            for ( int i = 0; i < mUser.beenPlaces.size(); ++i ) {
-                savedText.append( mUser.beenPlaces.get( i ).getName() );
+            for ( int i = 0; i < mUser.getBeenPlaces().size(); ++i ) {
+                savedText.append( mUser.getBeenPlaces().get( i ).getName() );
                 savedText.append( "\n" );
-
             }
 
             TextView favoritedText = (TextView) findViewById( R.id.favoritedText );
             favoritedText.setText( "Favorites: " );
-            for ( int i = 0; i < mUser.favoritedPlaces.size(); ++i ) {
-                favoritedText.append( mUser.favoritedPlaces.get( i ).getName() );
+            for ( int i = 0; i < mUser.getFavoritedPlaces().size(); ++i ) {
+                favoritedText.append( mUser.getFavoritedPlaces().get( i ).getName() );
                 favoritedText.append( "\n" );
-
             }
             android.app.ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled( true );
@@ -303,7 +274,6 @@ public class SearchActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             return mFragments.get( position );
         }
-
     }
 
     public static class QuickSearchFragment extends Fragment {
@@ -410,6 +380,31 @@ public class SearchActivity extends ActionBarActivity {
             }
 
         }
+    }
+    
+    /* Button onClick() functions */
+    public void ratingSort(View view) {
+        if ( mPlaces.isEmpty() )
+            return;
+
+        Collections.sort( mPlaces, Place.ratingComparator );
+        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
+    }
+
+    public void distanceSort(View view) {
+        if ( mPlaces.isEmpty() )
+            return;
+
+        Collections.sort( mPlaces, Place.distanceComparator );
+        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
+    }
+
+    public void openSort(View view) {
+        if ( mPlaces.isEmpty() )
+            return;
+
+        Collections.sort( mPlaces, Place.openComparator );
+        mPager.setAdapter( new MyAdapter( getSupportFragmentManager() ) );
     }
 
 }
