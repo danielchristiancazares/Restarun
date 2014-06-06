@@ -2,92 +2,85 @@ package com.example.restarun.User;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import com.example.yelp.Place;
 
 public class User {
     public String m_name = "";
     public String m_photo = "";
-    private ArrayList<Place> beenPlaces;
-    private ArrayList<Place> savedDeals;
-    private ArrayList<Place> favoritedPlaces;
-    
-    private volatile static User user;
+    public static ArrayList<Place> beenPlaces = new ArrayList<Place>();
+    public static ArrayList<Place> favoritedPlaces = new ArrayList<Place>();
+
+    private volatile static User user = null;
+
     private User() {
-    	
+
     }
+
     public String getName() {
-    	return m_name;
+        return m_name;
     }
-    
+
     public String getPhoto() {
-    	return m_photo;
+        return m_photo;
     }
-    
+
     public ArrayList<Place> getBeenPlaces() {
-    	return beenPlaces;
+        return beenPlaces;
     }
-    
+
     public ArrayList<Place> getFavoritedPlaces() {
-    	return favoritedPlaces;
+        return favoritedPlaces;
     }
-    
+
     public void setName(String name) {
-    	m_name = name;
+        m_name = name;
     }
-    
+
     public void setPhoto(String photo) {
-    	m_photo = photo;
+        m_photo = photo;
     }
-    
+
     public static User getInstance() {
-    	if(user==null) {
-    		synchronized(User.class) {
-    			if(user == null) {
-    				user = new User();
-    			}
-    		}
-    	}
-    	return user;
+        if ( user == null ) {
+            synchronized (User.class) {
+                if ( user == null ) {
+                    user = new User();
+                }
+            }
+        }
+        return user;
     }
-    
-    public void add(String flag, Place place) {
-    	switch(flag) {
-    	case "been":
-    		if(beenPlaces == null) {
-    			beenPlaces = new ArrayList<Place>();
-    		}
-    		beenPlaces.add(place);
-    		break;
-    	
-    	case "favorite":
-    		if(favoritedPlaces == null) {
-    			favoritedPlaces = new ArrayList<Place>();
-    		}
-    		favoritedPlaces.add(place);
-    		break;
-    		
-    	default:
-    		break;
-    	}
+
+    public void addItem(String flag, Place place) {
+        switch (flag) {
+        case "been":
+            beenPlaces.add( place );
+            break;
+
+        case "favorite":
+            favoritedPlaces.add( place );
+            break;
+
+        default:
+            break;
+        }
     }
-    
-    public boolean contains(String flag, Place place){
-    	switch(flag) {
-    	case "been":
-    		for(Place a:beenPlaces){
-    			if(a.getAddress().equals(place.getAddress())){
-    				return false;
-    			}
-    		}
-    		return true;
-    	
-    	case "favorite":
-    		for(Place a:favoritedPlaces) {
-    			if(a.getAddress().equals(place.getAddress()))
-    				return false;
-    		}
-    		return true;
-    	}
-    	return false;
+
+    public boolean containsItem(String flag, Place place) {
+        switch (flag) {
+        case "been":
+            if ( !beenPlaces.contains( place ) )
+                return false;
+            return true;
+
+        case "favorite":
+            if ( !favoritedPlaces.contains( place ) )
+                return false;
+
+            return true;
+        }
+        return false;
     }
 }

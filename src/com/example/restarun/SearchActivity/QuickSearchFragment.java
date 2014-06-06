@@ -15,33 +15,24 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.restarun.R;
-
 import com.example.yelp.Place;
 
 public class QuickSearchFragment extends Fragment {
 
     private String mName;
     private String mImageURL;
-    private String mAddress;
-    private String mNumber;
-    private String mGoogleAddress;
     private double mRating;
     private double mDistance;
     private Boolean mIsClosed;
 
-    static QuickSearchFragment newInstance(int num) {
+    static QuickSearchFragment newInstance( Place p) {
         QuickSearchFragment frag = new QuickSearchFragment();
 
-        Place p = mPlaces.get( num );
         frag.mName = p.m_name;
         frag.mImageURL = p.m_imageURL;
-        frag.mAddress = p.m_address;
-        frag.mNumber = p.m_number;
         frag.mRating = p.m_rating;
         frag.mDistance = p.m_distance;
         frag.mIsClosed = p.m_isClosed;
-        frag.mGoogleAddress = p.m_googleAddress;
-
         return frag;
     }
 

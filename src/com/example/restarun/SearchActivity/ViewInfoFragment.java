@@ -8,14 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.restarun.R;
 
 public class ViewInfoFragment extends Fragment {
 
-    public void setMap(String m_name, String m_address) {
+    String m_name, m_address;
+    
+    ImageView googleMap;
+    
+    ViewInfoFragment(String pName, String pAddress) {
+        m_name = pName;
+        m_address = pAddress;
+    }
+    public void setMap() {
 
-        ImageView googleMap = (ImageView) findViewById( R.id.map );
         String unparsedURL = "http://maps.googleapis.com/maps/api/staticmap?center="
                 + m_address
                 + "&zoom=15&size=1000x1000&maptype=roadmap&markers="
@@ -32,6 +40,19 @@ public class ViewInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        return inflater.inflate( R.layout.fragment_info, container, false );
+        View view = inflater.inflate( R.layout.fragment_info, container, false );
+        
+        /* Set the information for the resetaurant information fragment */
+        TextView infoName = (TextView) view.findViewById( R.id.info_name );
+        infoName.setText( m_name );
+
+        TextView infoAddr = (TextView) view.findViewById( R.id.info_addr );
+        infoAddr.setText( m_address );
+        
+        googleMap = (ImageView) view.findViewById( R.id.map );
+        
+        setMap();
+        
+        return view;
     }
 }
