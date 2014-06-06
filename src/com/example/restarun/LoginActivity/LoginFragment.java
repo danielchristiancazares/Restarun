@@ -2,7 +2,6 @@ package com.example.restarun.LoginActivity;
 
 import java.util.Arrays;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.Typeface;
@@ -10,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.restarun.R;
-import com.example.restarun.SearchActivity.SearchActivity;
-import com.example.restarun.User.User;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
 public class LoginFragment extends Fragment {

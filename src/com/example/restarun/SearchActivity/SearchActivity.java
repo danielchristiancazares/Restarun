@@ -7,8 +7,6 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import android.content.Intent;
@@ -16,8 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,11 +39,6 @@ import com.example.restarun.User.User;
 import com.example.restarun.gpsTracker.ServiceGPS;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 //latlng for LA
 //34.0204989
@@ -100,25 +91,12 @@ public class SearchActivity extends ActionBarActivity {
         int currentPos = mPager.getCurrentItem();
         Place currentPlace = mPlaces.get( currentPos );
 
-        if ( !mUser.contains("favorite", currentPlace ) ) {
+        if ( !mUser.contains( "favorite", currentPlace ) ) {
             mUser.add( "favorite", currentPlace );
         }
     }
 
-
-    public void setMap(String m_name, String m_address) {
-
-        ImageView googleMap = (ImageView) findViewById(R.id.map);
-        String unparsedURL = "http://maps.googleapis.com/maps/api/staticmap?center=" + m_address + "&zoom=15&size=1000x1000&maptype=roadmap&markers=" + m_address;
-        String mapURL = unparsedURL.replaceAll(" ", "%20");
-        try {
-            googleMap.setImageBitmap( new QuickSearchFragment.DownloadImage().execute(mapURL)
-                    .get() );
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
+    // TODO: Move to profile activity.
     public void doLogout(View view) {
         Intent intent = new Intent( this, MainActivity.class );
         Bundle args = new Bundle();
@@ -148,8 +126,8 @@ public class SearchActivity extends ActionBarActivity {
 
         /* Retrieve the login information from the previous activity */
         Bundle b = getIntent().getExtras();
-        mUser.setName( b.getString( "user_name" ));
-        mUser.setPhoto( b.getString( "FB_photo" ));
+        mUser.setName( b.getString( "user_name" ) );
+        mUser.setPhoto( b.getString( "FB_photo" ) );
 
         /* Preload all layout fragments */
         FragmentTransaction transaction = getSupportFragmentManager()
@@ -165,28 +143,26 @@ public class SearchActivity extends ActionBarActivity {
         Location m_location = new ServiceGPS( this ).getLocation();
 
         /* Attempt to pass phone's GPS latitude and longitude */
+        Double latitude = null;
+        Double longitude = null;
+
+        latitude = m_location.getLatitude();
+        longitude = m_location.getLongitude();
+
+        if ( latitude == null || longitude == null ) {
+            latitude = 32.8762142;
+            longitude = -117.2354577;
+        }
         try {
-            mPlaces = new YelpAPI().execute( m_location.getLatitude(),
-                    m_location.getLongitude() ).get();
-        } catch (NullPointerException e) {
-            /* Default to pre-set coordinates in case GPS fails */
-            try {
-                Log.w( "Restarun",
-                        "GPS coordinates not found!\nFalling back to predefined coordinates" );
-                mPlaces = new YelpAPI().execute( 32.8762142, -117.2354577 )
-                        .get();
-            } catch (InterruptedException | ExecutionException e1) {
-                e1.printStackTrace();
-            }
+            mPlaces = new YelpAPI().execute( latitude, longitude ).get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
         }
 
         /* Select a random restaurant in the list and move it to first position */
-        //Random rand = new Random();
-        //int pos = rand.nextInt( mPlaces.size() );
-        //int pos = 1;
-        //Collections.swap( mPlaces, 0, pos );
+        // Random rand = new Random();
+        // int pos = rand.nextInt( mPlaces.size() );
+        // int pos = 1;
+        // Collections.swap( mPlaces, 0, pos );
 
         /* Load the list view */
         mPager = (ViewPager) findViewById( R.id.pager );
@@ -211,7 +187,7 @@ public class SearchActivity extends ActionBarActivity {
         transaction.hide( profileInfoFragment );
         transaction.commit();
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         /* Handle presses on the action bar items */
@@ -223,24 +199,29 @@ public class SearchActivity extends ActionBarActivity {
 
             /* Set user profile information */
             TextView usernameText = (TextView) findViewById( R.id.welcomeText );
-            usernameText.setText( "Hi, " + mUser.getName() );
             TextView been = (TextView) findViewById( R.id.been );
-            been.setText( "been to " + mUser.getBeenPlaces().size() + " place(s)" );
             TextView favorited = (TextView) findViewById( R.id.favorited );
+            TextView savedText = (TextView) findViewById( R.id.savedText );
+            TextView favoritedText = (TextView) findViewById( R.id.favoritedText );
+
+            
+            usernameText.append( mUser.m_name );
+
+            been.setText( "been to " + mUser.getBeenPlaces().size()
+                    + " place(s)" );
             favorited.setText( "favorited " + mUser.getFavoritedPlaces().size()
                     + " place(s)" );
 
-            TextView savedText = (TextView) findViewById( R.id.savedText );
             savedText.setText( "History: " );
             for ( int i = 0; i < mUser.getBeenPlaces().size(); ++i ) {
                 savedText.append( mUser.getBeenPlaces().get( i ).getName() );
                 savedText.append( "\n" );
             }
 
-            TextView favoritedText = (TextView) findViewById( R.id.favoritedText );
             favoritedText.setText( "Favorites: " );
             for ( int i = 0; i < mUser.getFavoritedPlaces().size(); ++i ) {
-                favoritedText.append( mUser.getFavoritedPlaces().get( i ).getName() );
+                favoritedText.append( mUser.getFavoritedPlaces().get( i )
+                        .getName() );
                 favoritedText.append( "\n" );
             }
             android.app.ActionBar actionBar = getActionBar();
@@ -276,112 +257,6 @@ public class SearchActivity extends ActionBarActivity {
         }
     }
 
-    public static class QuickSearchFragment extends Fragment {
-
-        private String mName;
-        private String mImageURL;
-        private String mAddress;
-        private String mNumber;
-        private String mGoogleAddress;
-        private double mRating;
-        private double mDistance;
-        private Boolean mIsClosed;
-
-        static QuickSearchFragment newInstance(int num) {
-            QuickSearchFragment frag = new QuickSearchFragment();
-
-            Place p = mPlaces.get( num );
-            frag.mName = p.m_name;
-            frag.mImageURL = p.m_imageURL;
-            frag.mAddress = p.m_address;
-            frag.mNumber = p.m_number;
-            frag.mRating = p.m_rating;
-            frag.mDistance = p.m_distance;
-            frag.mIsClosed = p.m_isClosed;
-            frag.mGoogleAddress = p.m_googleAddress;
-
-            return frag;
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate( savedInstanceState );
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View view = inflater.inflate( R.layout.fragment_quicksearch,
-                    container, false );
-
-            ImageView image = (ImageView) view.findViewById( R.id.imageView1 );
-            TextView name = (TextView) view.findViewById( R.id.name );
-            TextView distance = (TextView) view.findViewById( R.id.distance );
-            TextView closed = (TextView) view.findViewById( R.id.closed );
-
-            RatingBar rating = (RatingBar) view.findViewById( R.id.ratingBar );
-            rating.setIsIndicator( true );
-
-            Typeface font = Typeface.createFromAsset(
-                    getActivity().getAssets(), "fonts/Roboto-Regular.ttf" );
-            Typeface font2 = Typeface.createFromAsset( getActivity()
-                    .getAssets(), "fonts/Roboto-Light.ttf" );
-
-            name.setTextColor( Color.WHITE );
-            distance.setTextColor( Color.WHITE );
-            closed.setTextColor( Color.WHITE );
-
-            name.setTypeface( font );
-            distance.setTypeface( font2 );
-            closed.setTypeface( font2 );
-
-            name.setText( mName );
-            if ( mIsClosed == true )
-                closed.setText( "Currently closed!" );
-            else
-                closed.setText( "Currently open!" );
-
-            rating.setRating( (float) mRating );
-
-            DecimalFormat fmtDistance = new DecimalFormat( "##.##" );
-            distance.setText( fmtDistance.format( mDistance ) + " miles away" );
-
-            try {
-                image.setImageBitmap( new DownloadImage().execute( mImageURL )
-                        .get() );
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-
-            return view;
-        }
-
-        private static class DownloadImage extends
-                AsyncTask<String, Void, Bitmap> {
-
-            @Override
-            protected Bitmap doInBackground(String... strings) {
-                try {
-                    URL url = new URL( strings[0] );
-                    HttpURLConnection connection = (HttpURLConnection) url
-                            .openConnection();
-                    connection.setDoInput( true );
-                    connection.connect();
-
-                    InputStream input = connection.getInputStream();
-                    Bitmap myBitmap = BitmapFactory.decodeStream( input );
-                    connection.disconnect();
-                    return myBitmap;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                return null;
-            }
-
-        }
-    }
-    
     /* Button onClick() functions */
     public void ratingSort(View view) {
         if ( mPlaces.isEmpty() )
