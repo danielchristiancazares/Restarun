@@ -49,6 +49,10 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+//latlng for LA
+//34.0204989
+//-118.4117325
+
 public class SearchActivity extends ActionBarActivity {
     private static ArrayList<Place> mPlaces;
     private static ViewPager mPager;
