@@ -138,6 +138,7 @@ public class SearchActivity extends ActionBarActivity {
         
         FileInputStream fis;
         try {
+            Log.d("DEBUG","Reading user_data.dat");
             File file = new File(this.getFilesDir().getAbsolutePath() + "/user_data.dat");
             fis = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(fis);
