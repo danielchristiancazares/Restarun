@@ -45,7 +45,7 @@ public class Place {
     }
 
     public String getAddress() {
-        return m_address;
+        return m_googleAddress;
     }
     
     public String getNumber() {

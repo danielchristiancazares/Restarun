@@ -4,6 +4,10 @@
     <item
         android:id="@+id/profile"
         android:title="@string/action_profile"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="never"/>
 
+    <item 
+        android:id="@+id/logout"
+        android:title="Logout"
+        app:showAsAction="never" />
 </menu>

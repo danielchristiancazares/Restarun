@@ -1,14 +1,21 @@
 package com.example.restarun.SearchActivity;
 
+import info.androidhive.actionbar.model.SpinnerNavItem;
+import info.androidhive.info.actionbar.adapter.TitleNavigationAdapter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar.OnNavigationListener;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -20,20 +27,26 @@ import android.widget.Toast;
 
 import com.example.restarun.R;
 import com.example.restarun.LoginActivity.MainActivity;
+import com.example.restarun.ProfileActivity.ProfileFragment;
 import com.example.restarun.User.User;
 import com.example.restarun.gpsTracker.ServiceGPS;
 import com.example.yelp.Place;
 import com.example.yelp.YelpAPI;
 
-public class SearchActivity extends ActionBarActivity {
+public class SearchActivity extends ActionBarActivity{
     private static ArrayList<Place> mPlaces;
     private static ViewPager mPager;
-
+    private static boolean profileBackStackFlag = true;
+    private static boolean viewInfoBackStackFlag = true;
     //private static ViewInfoFragment viewInfoFragment = new ViewInfoFragment();
    // private static ProfileInfoFragment profileInfoFragment = new ProfileInfoFragment();
 
     private User mUser = User.getInstance();
-
+    
+    private ActionBar actionBar;
+    private ArrayList<SpinnerNavItem> navSpinner;
+    private TitleNavigationAdapter adapter;
+    
     public void getInfo(View view) {
         /* Find the current restaurant selected */
         int currentPos = mPager.getCurrentItem();
@@ -42,9 +55,11 @@ public class SearchActivity extends ActionBarActivity {
         FragmentTransaction transaction = getSupportFragmentManager()
                 .beginTransaction();
         //TODO: Fix function call/member access.
-        ViewInfoFragment viewInfoFragment = new ViewInfoFragment(currentPlace.getName(), currentPlace.m_googleAddress);
+        ViewInfoFragment viewInfoFragment = new ViewInfoFragment(currentPlace.getName(), currentPlace.getAddress());
         transaction.add( R.id.container, viewInfoFragment );
-        transaction.addToBackStack(null);
+        if(viewInfoBackStackFlag) {
+        	transaction.addToBackStack(null);
+        }
         transaction.commit();
 
         android.app.ActionBar actionBar = getActionBar();
@@ -114,15 +129,9 @@ public class SearchActivity extends ActionBarActivity {
         } catch (InterruptedException | ExecutionException e) {
         }
 
-        /* Select a random restaurant in the list and move it to first position */
-        // Random rand = new Random();
-        // int pos = rand.nextInt( mPlaces.size() );
-        // int pos = 1;
-        // Collections.swap( mPlaces, 0, pos );
-
         /* Load the list view */
         mPager = (ViewPager) findViewById( R.id.pager );
-        MyAdapter mAdapter = new MyAdapter( getSupportFragmentManager(),
+        MyAdapter mAdapter = new MyAdapter( this.getSupportFragmentManager(),
                 mPlaces );
         mPager.setAdapter( mAdapter );
         mPager.setOffscreenPageLimit( mPlaces.size() );
@@ -151,15 +160,18 @@ public class SearchActivity extends ActionBarActivity {
         case R.id.profile:
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction();
-            ProfileInfoFragment profileInfoFragment = new ProfileInfoFragment();
-            transaction.add( R.id.container, profileInfoFragment );
-            transaction.addToBackStack(null);
+            ProfileFragment profileFragment = new ProfileFragment();
+            transaction.add( R.id.container, profileFragment );
+            if(profileBackStackFlag) {
+            	transaction.addToBackStack(null);
+            	profileBackStackFlag = false;
+            }
             transaction.commit();
             
-            android.app.ActionBar actionBar = getActionBar();
-            actionBar.setDisplayHomeAsUpEnabled( true );
             return true;
             
+        case R.id.logout:
+        	return true;
         default:
             return super.onOptionsItemSelected( item );
         }
