@@ -61,7 +61,7 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 current = unparsedBsnsArray.getJSONObject( i );
 
                 /* Store whether or not the business is currently open */
-                Boolean is_closed = current.getBoolean( "is_closed" );
+                boolean is_closed = current.getBoolean( "is_closed" );
 
                 /* Store display category and internal category */
                 categories = current.getJSONArray( "categories" );
@@ -74,7 +74,7 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                 String gAdd1 = googleAddress.getJSONArray( "address" ).get(0).toString();
                 String gAdd2 = googleAddress.get( "city" ).toString();
                 
-                GoogleAddress = gAdd1 + "," + gAdd2;
+                GoogleAddress = gAdd1 + ", " + gAdd2;
                 String Address = "";
                 int j;
                 for ( j = 0; j < displayAddress.length() - 1; ++j ) {
@@ -100,7 +100,11 @@ public class YelpAPI extends AsyncTask<Double, Void, ArrayList<Place>> {
                         .toString() ) / 1609.34;
                 Place newPlace = new Place( Name, Rating, Address, Distance,
                         Category, SortableCategory, ImageURL, Number, is_closed );
-                newPlace.m_googleAddress = GoogleAddress;
+                String unparsedURL = "https://maps.googleapis.com/maps/api/staticmap?center="
+                        + GoogleAddress
+                        + "&zoom=15&size=1000x1000&maptype=roadmap&markers="
+                        + GoogleAddress;
+                newPlace.m_googleAddress = unparsedURL.replaceAll( " ", "%20" );
                 foundPlaces.add( newPlace );
             }
         } catch (JSONException e) {

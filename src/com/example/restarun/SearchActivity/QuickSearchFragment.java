@@ -3,6 +3,7 @@ package com.example.restarun.SearchActivity;
 import java.text.DecimalFormat;
 import java.util.concurrent.ExecutionException;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -20,19 +21,26 @@ import com.example.yelp.Place;
 public class QuickSearchFragment extends Fragment {
 
     private String mName;
-    private String mImageURL;
+    private Bitmap imageBitmap = null;
     private double mRating;
     private double mDistance;
-    private Boolean mIsClosed;
-
-    static QuickSearchFragment newInstance( Place p) {
+    private boolean mIsClosed = false;
+    
+    static QuickSearchFragment newInstance( Place p ) {
         QuickSearchFragment frag = new QuickSearchFragment();
 
         frag.mName = p.m_name;
-        frag.mImageURL = p.m_imageURL;
         frag.mRating = p.m_rating;
         frag.mDistance = p.m_distance;
         frag.mIsClosed = p.m_isClosed;
+        
+        try {
+            frag.imageBitmap = new DownloadImage().execute( p.m_imageURL )
+                    .get();
+        } catch (InterruptedException | ExecutionException e) {
+        }
+
+        
         return frag;
     }
 
@@ -73,18 +81,14 @@ public class QuickSearchFragment extends Fragment {
             closed.setText( "Currently closed!" );
         else
             closed.setText( "Currently open!" );
-
+        
         rating.setRating( (float) mRating );
+        
+        image.setImageBitmap( imageBitmap );
 
         DecimalFormat fmtDistance = new DecimalFormat( "##.##" );
         distance.setText( fmtDistance.format( mDistance ) + " miles away" );
 
-        try {
-            image.setImageBitmap( new DownloadImage().execute( mImageURL )
-                    .get() );
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
 
         return view;
     }

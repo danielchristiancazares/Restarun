@@ -8,6 +8,7 @@ import java.net.URL;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class DownloadImage extends AsyncTask<String, Void, Bitmap> {
 
@@ -25,6 +26,7 @@ public class DownloadImage extends AsyncTask<String, Void, Bitmap> {
             connection.disconnect();
             return myBitmap;
         } catch (IOException e) {
+            Log.d("DEBUG","" + strings[0]);
             e.printStackTrace();
         }
 

@@ -1,8 +1,13 @@
 package com.example.yelp;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class Place {
+public class Place implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 355186315274929353L;
     public String m_name;
     public String m_address;
     public String m_category;
@@ -10,20 +15,12 @@ public class Place {
     public String m_imageURL;
     public String m_number;
     public String m_googleAddress;
-    /*
-     * m_deal[0] is deal_id
-     * m_deal[1] is deal_title
-     * m_deal[2] is deal_url
-     * m_deal[3] is deal_time_start
-     */
-    //public String[] m_deal = new String[4];
-    
     public double m_rating;
     public double m_distance;
-    public Boolean m_isClosed;
+    public boolean m_isClosed;
 
     public Place(String pName, double pRating, String pAddress,
-            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber, Boolean pIsClosed ) {
+            double pDistance, String pCat, String pSortCat, String pImageURL, String pNumber, boolean pIsClosed ) {
         m_address = pAddress;
         m_rating = pRating;
         m_name = pName;
@@ -33,6 +30,15 @@ public class Place {
         m_number = pNumber;
         m_isClosed = pIsClosed;
         setImageURL( pImageURL );
+    }
+    
+    public String toString() {
+        String result = "";
+        result += m_name + " ";
+        result += m_address + " ";
+        result += m_imageURL + " ";
+        
+        return result;
     }
 
     // Accessors
@@ -105,8 +111,8 @@ public class Place {
 
         public int compare(Place firstPlace, Place secondPlace) {
 
-            Boolean firstDist = firstPlace.m_isClosed;
-            Boolean secondDist = secondPlace.m_isClosed;
+            boolean firstDist = firstPlace.m_isClosed;
+            boolean secondDist = secondPlace.m_isClosed;
             if( firstDist == true && secondDist == false )
             {
                 return 1;

@@ -46,14 +46,6 @@
         android:layout_centerHorizontal="true" >
 
         <Button
-            android:id="@+id/button2"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="eatHere"
-            android:text="Eat Here" />
-
-        <Button
             android:id="@+id/button1"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
@@ -63,5 +55,24 @@
             android:onClick="addFavorite"
             android:text="Add to Favorites" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/getDirections"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:onClick="getDirections"
+        android:text="Get Directions" />
+
+    <Button
+        android:id="@+id/button2"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:onClick="eatHere"
+        android:text="Eat Here" />
 
 </RelativeLayout>
