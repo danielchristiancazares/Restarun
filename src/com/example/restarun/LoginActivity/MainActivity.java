@@ -25,12 +25,6 @@ import com.facebook.widget.LoginButton;
 public class MainActivity extends FragmentActivity {
 
     public User mUser = User.getInstance();
-
-    private static final int SPLASH = 0;
-    private static final int SELECTION = 1;
-    private Fragment loginFragment;
-    private boolean isResumed = false;
-
     private UiLifecycleHelper uiHelper;
     private static LoginButton authButton;
 
@@ -89,12 +83,13 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
 
+
         onLogout();
         uiHelper = new UiLifecycleHelper( this, statusCallback );
         uiHelper.onCreate( savedInstanceState );
-
+        Session.openActiveSession( this, true, statusCallback );
+        
         setContentView( R.layout.activity_main );
-
         Typeface font = Typeface.createFromAsset( getAssets(),
                 "fonts/Roboto-Regular.ttf" );
 
@@ -108,7 +103,6 @@ public class MainActivity extends FragmentActivity {
         authButton.setTypeface( font );
         authButton.setEnabled( true );
 
-        Session.openActiveSession( this, true, statusCallback );
     }
 
     public static void callFacebookLogout(Context context) {
@@ -152,7 +146,6 @@ public class MainActivity extends FragmentActivity {
     public void onPause() {
         super.onPause();
         uiHelper.onPause();
-        isResumed = false;
     }
 
     @Override

@@ -3,7 +3,7 @@
     android:id="@+id/fraginfo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#082640"
     android:gravity="center_horizontal"
     tools:context="${packageName}.${activityClass}" >
 
@@ -29,13 +29,20 @@
             android:layout_gravity="center_horizontal"
             android:text="Address" />
 
+        <Button
+            android:id="@+id/getDirections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttons"
+            android:onClick="getDirections"
+            android:text="Get Directions" />
+
         <ImageView
             android:id="@+id/map"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/no_photo" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -46,33 +53,24 @@
         android:layout_centerHorizontal="true" >
 
         <Button
+            android:id="@+id/button2"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/buttons"
+            android:onClick="eatHere" 
+            android:text="Eat Here" />
+
+        <Button
             android:id="@+id/button1"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/linearLayout1"
-            android:onClick="addFavorite"
-            android:text="Add to Favorites" />
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/buttons"
+            android:onClick="addFavorite" 
+            android:text="Favorite" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/getDirections"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:onClick="getDirections"
-        android:text="Get Directions" />
-
-    <Button
-        android:id="@+id/button2"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:onClick="eatHere"
-        android:text="Eat Here" />
 
 </RelativeLayout>
