@@ -44,7 +44,6 @@ public class ViewInfoFragment extends Fragment {
         infoAddr.setText( m_place.m_address );
 
         googleMap = (ImageView) view.findViewById( R.id.map );
-
         setMap();
         return view;
     }

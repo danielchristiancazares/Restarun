@@ -16,30 +16,31 @@ public class User implements Serializable {
     private static final long serialVersionUID = 2120503951824490511L;
     public String m_name = "";
     public String m_photo = "";
-    public static ArrayList<Place> beenPlaces = new ArrayList<Place>();
-    public static ArrayList<Place> favoritedPlaces = new ArrayList<Place>();
+    public static ArrayList<String> beenPlaces = new ArrayList<String>();
+    public static ArrayList<String> favoritedPlaces = new ArrayList<String>();
     public boolean logoutCalled = false;
 
     public static MyAdapter mAdapter = null;
 
     private volatile static User user = null;
 
-    public User() {
+    private User() {
 
     }
-
-    public User(String pName, String pPhoto, ArrayList<Place> pBeen,
-            ArrayList<Place> pFavorites, boolean pLogout, MyAdapter pAdapter,
-            User pUser) {
-        this.m_name = pName;
-        this.m_photo = pPhoto;
-        this.beenPlaces = pBeen;
-        this.favoritedPlaces = pFavorites;
-        this.logoutCalled = pLogout;
-        this.mAdapter = pAdapter;
-        this.user = pUser;
+    
+    public String toString() {
+    	String result = "";
+    	result += m_name;
+    	result += "\n" + beenPlaces.size() + "\n";
+    	for(String s : beenPlaces) {
+    		result += s + "\n";
+    	}
+    	result +=  favoritedPlaces.size() + "\n";
+    	for(String s : favoritedPlaces) {
+    		result += s + "\n";
+    	}
+    	return result;
     }
-
     public String getName() {
         return m_name;
     }
@@ -48,11 +49,11 @@ public class User implements Serializable {
         return m_photo;
     }
 
-    public ArrayList<Place> getBeenPlaces() {
+    public ArrayList<String> getBeenPlaces() {
         return beenPlaces;
     }
 
-    public ArrayList<Place> getFavoritedPlaces() {
+    public ArrayList<String> getFavoritedPlaces() {
         return favoritedPlaces;
     }
 
@@ -75,40 +76,24 @@ public class User implements Serializable {
         return user;
     }
 
-    public static MyAdapter getAdapter(
+    public MyAdapter getAdapter(
             android.support.v4.app.FragmentManager pFm) {
         if ( mAdapter == null ) {
-            synchronized (MyAdapter.class) {
-                if ( mAdapter == null ) {
-                    mAdapter = new MyAdapter( pFm );
-                }
-            }
+        	mAdapter = new MyAdapter( pFm );
         }
 
         return mAdapter;
 
     }
 
-    public String toString() {
-        String result = "";
-        result += m_name + " ";
-        for(Place p : beenPlaces) {
-            result += p.toString() + " ";
-        }
-        for(Place p : favoritedPlaces) {
-            result += p.toString() + " ";
-        }
-        return result;
-    }
-
-    public void addItem(String flag, Place place) {
+    public void addItem(String flag, String name) {
         switch (flag) {
         case "been":
-            beenPlaces.add( place );
+            beenPlaces.add( name );
             break;
 
         case "favorite":
-            favoritedPlaces.add( place );
+            favoritedPlaces.add( name );
             break;
 
         default:
@@ -116,15 +101,15 @@ public class User implements Serializable {
         }
     }
 
-    public boolean containsItem(String flag, Place place) {
+    public boolean containsItem(String flag, String name) {
         switch (flag) {
         case "been":
-            if ( !beenPlaces.contains( place ) )
+            if ( !beenPlaces.contains( name ) )
                 return false;
             return true;
 
         case "favorite":
-            if ( !favoritedPlaces.contains( place ) )
+            if ( !favoritedPlaces.contains( name ) )
                 return false;
 
             return true;

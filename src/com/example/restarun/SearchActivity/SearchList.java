@@ -19,7 +19,14 @@ public class SearchList {
     }
 
     public void setPlaces(ArrayList<Place> pPlaces) {
-        mPlaces = pPlaces;
+    	for(Place p : pPlaces) {
+    		if(!mPlaces.contains(p))
+    			mPlaces.add(p);
+    	}
+    }
+    
+    public int getSize() {
+    	return mPlaces.size();
     }
 
     public static SearchList getInstance() {

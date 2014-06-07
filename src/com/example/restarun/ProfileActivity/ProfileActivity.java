@@ -1,8 +1,5 @@
 package com.example.restarun.ProfileActivity;
 
-import info.androidhive.actionbar.model.SpinnerNavItem;
-import info.androidhive.info.actionbar.adapter.TitleNavigationAdapter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +23,7 @@ import android.widget.Toast;
 import com.example.restarun.R;
 import com.example.restarun.LoginActivity.MainActivity;
 import com.example.restarun.SearchActivity.ExpandableListAdapter;
+import com.example.restarun.SearchActivity.SearchActivity;
 import com.example.restarun.User.User;
 import com.example.yelp.Place;
 import com.facebook.widget.ProfilePictureView;
@@ -129,7 +127,7 @@ public class ProfileActivity extends ActionBarActivity {
         inflater.inflate( R.menu.profile, menu );
         return super.onCreateOptionsMenu( menu );
     }
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         /* Handle presses on the action bar items */
@@ -157,13 +155,13 @@ public class ProfileActivity extends ActionBarActivity {
 
         // Adding child data
         List<String> favorites = new ArrayList<String>();
-        for ( Place p : mUser.favoritedPlaces ) {
-            favorites.add( p.m_name );
+        for ( String p : mUser.favoritedPlaces ) {
+            favorites.add( p );
         }
 
         List<String> history = new ArrayList<String>();
-        for ( Place p : mUser.beenPlaces ) {
-            history.add( p.m_name );
+        for ( String p : mUser.beenPlaces ) {
+            history.add( p );
         }
 
         listDataChild.put( listDataHeader.get( 0 ), favorites ); // Header,

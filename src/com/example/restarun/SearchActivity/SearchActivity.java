@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
+import android.app.PendingIntent;
+import android.app.PendingIntent.CanceledException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +22,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -37,252 +42,265 @@ import com.example.yelp.YelpAPI;
 
 public class SearchActivity extends ActionBarActivity {
 
-    private static boolean viewInfoBackStackFlag = true;
+	private User mUser = User.getInstance();
+	private SearchList list = SearchList.getInstance();
 
-    private User mUser = User.getInstance();
-    private SearchList list = SearchList.getInstance();
+	private ViewInfoFragment viewInfoFragment;
+	private ViewPager mPager;
+	private boolean viewFlag = false;
 
-    private ViewPager mPager;
+	public void getInfo(View view) {
+		/* Find the current restaurant selected */
+		viewFlag = true;
+		int currentPos = mPager.getCurrentItem();
+		ArrayList<Place> mPlaces = list.getPlaces();
+		Place currentPlace = mPlaces.get(currentPos);
 
+		/* Display the information fragment */
+		FragmentTransaction transaction = getSupportFragmentManager()
+				.beginTransaction();
+		// TODO: Fix function call/member access.
+		viewInfoFragment = new ViewInfoFragment(currentPlace);
 
-    public void getInfo(View view) {
-        /* Find the current restaurant selected */
-        int currentPos = mPager.getCurrentItem();
-        ArrayList<Place> mPlaces = list.getPlaces();
-        Place currentPlace = mPlaces.get( currentPos );
+		try {
+			viewInfoFragment.m_bitmap = new DownloadImage().execute(
+					currentPlace.m_googleAddress).get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
+		transaction.add(R.id.container, viewInfoFragment).addToBackStack(null);
+		transaction.commit();
+		android.app.ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+	}
 
-        /* Display the information fragment */
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction();
-        // TODO: Fix function call/member access.
-        ViewInfoFragment viewInfoFragment = new ViewInfoFragment( currentPlace );
+	public void getDirections(View view) {
+		int currentPos = mPager.getCurrentItem();
+		ArrayList<Place> mPlaces = list.getPlaces();
+		Place currentPlace = mPlaces.get(currentPos);
 
-        try {
-            viewInfoFragment.m_bitmap = new DownloadImage().execute(
-                    currentPlace.m_googleAddress ).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+		Location m_location = new ServiceGPS(this).getLocation();
 
-        transaction.add( R.id.container, viewInfoFragment );
-        if ( viewInfoBackStackFlag ) {
-            transaction.addToBackStack( null );
-        }
-        transaction.commit();
+		double latitude = m_location.getLatitude();
+		double longitude = m_location.getLongitude();
 
-        android.app.ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled( true );
-    }
+		if(viewFlag) {
+			getSupportFragmentManager().popBackStack();
+			viewFlag = false;
+		}
+		Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+				Uri.parse("http://maps.google.com/maps?" + "saddr=" + latitude
+						+ "," + longitude + "&daddr=" + currentPlace.m_address));
+		intent.setClassName("com.google.android.apps.maps",
+				"com.google.android.maps.MapsActivity");
+		startActivity(intent);
+	}
 
-    public void getDirections(View view) {
-        int currentPos = mPager.getCurrentItem();
-        ArrayList<Place> mPlaces = list.getPlaces();
-        Place currentPlace = mPlaces.get( currentPos );
+	public void eatHere(View view) {
+		/* Find the current restaurant selected */
+		int currentPos = mPager.getCurrentItem();
+		ArrayList<Place> mPlaces = list.getPlaces();
+		Place currentPlace = mPlaces.get(currentPos);
+		String pName = currentPlace.getName();
+		if (!mUser.containsItem("been", pName)) {
+			mUser.addItem("been", pName);
+		}
+	}
 
-        Location m_location = new ServiceGPS( this ).getLocation();
+	public void addFavorite(View view) {
+		/* Find the current restaurant selected */
+		int currentPos = mPager.getCurrentItem();
+		ArrayList<Place> mPlaces = list.getPlaces();
+		Place currentPlace = mPlaces.get(currentPos);
+		String pName = currentPlace.getName();
+		if (!mUser.containsItem("favorite", pName)) {
+			mUser.addItem("favorite", pName);
+		}
+	}
 
-        double latitude = m_location.getLatitude();
-        double longitude = m_location.getLongitude();
+	@Override
+	public boolean onSupportNavigateUp() {
+		if (viewFlag) {
+			getSupportFragmentManager().popBackStack();
+			viewFlag = false;
+		}
+		android.app.ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(false);
+		return true;
+	}
 
-        Intent intent = new Intent( android.content.Intent.ACTION_VIEW,
-                Uri.parse( "http://maps.google.com/maps?" + "saddr=" + latitude
-                        + "," + longitude + "&daddr=" + currentPlace.m_address ));
-        intent.setClassName( "com.google.android.apps.maps",
-                "com.google.android.maps.MapsActivity" );
-        startActivity( intent );
-    }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		/* Add the action bar items to the view */
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 
-    public void eatHere(View view) {
-        /* Find the current restaurant selected */
-        int currentPos = mPager.getCurrentItem();
-        ArrayList<Place> mPlaces = list.getPlaces();
-        Place currentPlace = mPlaces.get( currentPos );
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_search);
+		if (mUser.m_name == "") {
+			InputStream in;
 
-        if ( !mUser.containsItem( "been", currentPlace ) ) {
-            mUser.addItem( "been", currentPlace );
-        }
-    }
+			try {
+				Log.d("DEBUG", "Reading user_data.dat");
+				in = new FileInputStream(this.getFilesDir() + "/user_data.dat");
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(in));
+				mUser.m_name = reader.readLine();
+				int beenSize = Integer.parseInt(reader.readLine());
+				for (int i = 0; i < beenSize; i++) {
+					mUser.addItem("been", reader.readLine());
+				}
+				int favSize = Integer.parseInt(reader.readLine());
+				for (int i = 0; i < favSize; i++) {
+					mUser.addItem("favorite", reader.readLine());
+				}
 
-    public void addFavorite(View view) {
-        /* Find the current restaurant selected */
-        int currentPos = mPager.getCurrentItem();
-        ArrayList<Place> mPlaces = list.getPlaces();
-        Place currentPlace = mPlaces.get( currentPos );
+				reader.close();
+				in.close();
 
-        if ( !mUser.containsItem( "favorite", currentPlace ) ) {
-            mUser.addItem( "favorite", currentPlace );
-        }
-    }
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		setViewPager();
+		Toast.makeText(getBaseContext(), "Welcome, " + mUser.m_name,
+				Toast.LENGTH_LONG).show();
+	}
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        getSupportFragmentManager().popBackStack();
+	@Override
+	public void onResume() {
+		Log.d("DEBUG", "Resuming...");
+		setViewPager();
+		super.onResume();
+	}
 
-        android.app.ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled( false );
-        return true;
-    }
+	@Override
+	public void onStop() {
+		Log.d("DEBUG", "Stopping...");
+		super.onStop();
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        /* Add the action bar items to the view */
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate( R.menu.main, menu );
-        return super.onCreateOptionsMenu( menu );
-    }
+	@Override
+	public void onDestroy() {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_search );
-        
-        FileInputStream fis;
-        try {
-            Log.d("DEBUG","Reading user_data.dat");
-            File file = new File(this.getFilesDir().getAbsolutePath() + "/user_data.dat");
-            fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            mUser = (User) ois.readObject();
-            ois.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+		try {
+			Log.d("DEBUG", "Saving to user_data");
+			User user = User.getInstance();
+			String save = user.toString();
+			FileOutputStream outputStream = openFileOutput("user_data.dat",
+					Context.MODE_PRIVATE);
+			outputStream.write(save.getBytes());
+			outputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        setViewPager( false );
-        Toast.makeText( getBaseContext(), "Welcome, " + mUser.m_name,
-                Toast.LENGTH_LONG ).show();
-    }
+		super.onDestroy();
+	}
 
-    @Override
-    public void onResume() {
-        Log.d( "DEBUG", "Resuming..." );
-        super.onResume();
-    }
-    
-    @Override
-    public void onStop() {
-        Log.d( "DEBUG", "Stopping...");
-        super.onStop();
-    }
-    
-    @Override
-    public void onDestroy() {
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.d("DEBUG", "Pausing...");
+	}
 
-        FileOutputStream outputStream;
+	@Override
+	public void onRestart() {
+		Log.d("DEBUG", "Restarting...");
+		super.onRestart();
+		setViewPager();
+	}
 
-        try {
-          File file = new File("user_data.dat");
-          Log.d("DEBUG","Saving to user_data");
-          outputStream = openFileOutput(file.getPath(), Context.MODE_PRIVATE);
-          ObjectOutputStream objectOutStream = new ObjectOutputStream(outputStream);
-          objectOutStream.writeObject(mUser);
-          outputStream.close();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-        
-        super.onDestroy();
-    }
-    
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("DEBUG","Pausing...");
-        //SharedPreferences.Editor ed = mPrefs.edit();
-        //ed.putInt("view_mode", mCurViewMode);
-        //ed.commit();
-    }
+	private void setViewPager() {
+		ArrayList<Place> mPlaces = new ArrayList<Place>();
 
-    @Override
-    public void onRestart() {
-        Log.d( "DEBUG", "Restarting..." );
-        super.onRestart();
-        setViewPager( true );
-    }
-    
-    private void setViewPager(boolean flag) {
-        ArrayList<Place> mPlaces = list.getPlaces();
+		/* Attempt to pass phone's GPS latitude and longitude */
+		Double latitude = null;
+		Double longitude = null;
 
-        /* Attempt to pass phone's GPS latitude and longitude */
-        Double latitude = null;
-        Double longitude = null;
+		/* Find the user's current location */
+		Location m_location = new ServiceGPS(this).getLocation();
 
-        /* Find the user's current location */
-        Location m_location = new ServiceGPS( this ).getLocation();
+		latitude = m_location.getLatitude();
+		longitude = m_location.getLongitude();
 
-        latitude = m_location.getLatitude();
-        longitude = m_location.getLongitude();
+		if (latitude == null || longitude == null) {
+			latitude = 32.8762142;
+			longitude = -117.2354577;
+		}
 
-        if ( latitude == null || longitude == null ) {
-            latitude = 32.8762142;
-            longitude = -117.2354577;
-        }
+		try {
+			if (list.getSize() != 0) {
+				Log.d("DEBUG", "Getting");
+				mPlaces = list.getPlaces();
+			} else {
+				Log.d("DEBUG", "Setting");
+				list.setPlaces(new YelpAPI().execute(latitude, longitude).get());
+			}
+		} catch (InterruptedException | ExecutionException e) {
+		}
 
-        try {
-            if ( flag ) {
-                Log.d( "DEBUG", "Getting" );
-                mPlaces = list.getPlaces();
-            } else {
-                Log.d( "DEBUG", "Setting" );
-                list.setPlaces( new YelpAPI().execute( latitude, longitude )
-                        .get() );
-            }
-        } catch (InterruptedException | ExecutionException e) {
-        }
+		/* Load the list view */
+		mPager = (ViewPager) findViewById(R.id.pager);
+		mPager.setAdapter(new MyAdapter(getSupportFragmentManager()));
+		mPager.setOffscreenPageLimit(mPlaces.size());
 
-        /* Load the list view */
-        mPager = (ViewPager) findViewById( R.id.pager );
-        mPager.setAdapter( mUser.getAdapter( getSupportFragmentManager() ) );
-        mPager.setOffscreenPageLimit( mPlaces.size() );
+	}
 
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		/* Handle presses on the action bar items */
+		switch (item.getItemId()) {
+		case R.id.profile:
+			if(viewFlag) {
+				getSupportFragmentManager().popBackStack();
+				viewFlag = false;
+			}
+			Intent intent = new Intent(this, ProfileActivity.class);
+			startActivity(intent);
+			return true;
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        /* Handle presses on the action bar items */
-        switch (item.getItemId()) {
-        case R.id.profile:
-            Intent intent = new Intent( this, ProfileActivity.class );
-            startActivity( intent );
-            return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 
-        default:
-            return super.onOptionsItemSelected( item );
-        }
-    }
+	/* Button onClick() functions */
+	public void ratingSort(View view) {
+		ArrayList<Place> mPlaces = list.getPlaces();
 
-    /* Button onClick() functions */
-    public void ratingSort(View view) {
-        ArrayList<Place> mPlaces = list.getPlaces();
+		if (mPlaces.isEmpty())
+			return;
 
-        if ( mPlaces.isEmpty() )
-            return;
+		Collections.sort(mPlaces, Place.ratingComparator);
+		MyAdapter mAdapter = new MyAdapter(getSupportFragmentManager());
+		mPager.setAdapter(mAdapter);
+	}
 
-        Collections.sort( mPlaces, Place.ratingComparator );
-        MyAdapter mAdapter = new MyAdapter( getSupportFragmentManager() );
-        mPager.setAdapter( mAdapter );
-    }
+	public void distanceSort(View view) {
+		ArrayList<Place> mPlaces = list.getPlaces();
 
-    public void distanceSort(View view) {
-        ArrayList<Place> mPlaces = list.getPlaces();
+		if (mPlaces.isEmpty())
+			return;
 
-        if ( mPlaces.isEmpty() )
-            return;
+		Collections.sort(mPlaces, Place.distanceComparator);
+		MyAdapter mAdapter = new MyAdapter(getSupportFragmentManager());
+		mPager.setAdapter(mAdapter);
+	}
 
-        Collections.sort( mPlaces, Place.distanceComparator );
-        MyAdapter mAdapter = new MyAdapter( getSupportFragmentManager() );
-        mPager.setAdapter( mAdapter );
-    }
+	public void openSort(View view) {
+		ArrayList<Place> mPlaces = list.getPlaces();
 
-    public void openSort(View view) {
-        ArrayList<Place> mPlaces = list.getPlaces();
+		if (mPlaces.isEmpty())
+			return;
 
-        if ( mPlaces.isEmpty() )
-            return;
-
-        Collections.sort( mPlaces, Place.openComparator );
-        MyAdapter mAdapter = new MyAdapter( getSupportFragmentManager() );
-        mPager.setAdapter( mAdapter );
-    }
+		Collections.sort(mPlaces, Place.openComparator);
+		MyAdapter mAdapter = new MyAdapter(getSupportFragmentManager());
+		mPager.setAdapter(mAdapter);
+	}
 
 }
